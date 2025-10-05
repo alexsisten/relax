@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KusiRelax - Tu Bienestar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0f1c, #1a2332);
+            color: white;
+            min-height: 100vh;
+            font-size: 14px;
+        }
+
+        /* Header Mobile First */
+        .header {
+            background: rgba(26, 35, 50, 0.9);
+            padding: 0.8rem 1rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #81e6d9;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: #81e6d9;
+            color: #1a202c;
+        }
+
+        .btn-secondary {
+            background: rgba(129, 230, 217, 0.1);
+            color: #81e6d9;
+            border: 2px solid #81e6d9;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(129, 230, 217, 0.3);
+        }
+
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(45, 55, 72, 0.6);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: #81e6d9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a202c;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Main Content */
+        .main {
+            margin-top: 70px;
+            padding: 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(45deg, #81e6d9, #bee3f8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: #a0aec0;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-title {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #81e6d9;
+        }
+
+        /* Compact Filters */
+        .filters {
+            background: rgba(45, 55, 72, 0.6);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .filters h3 {
+            margin-bottom: 0.8rem;
+            color: #81e6d9;
+            font-size: 1rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+            border: 2px solid #4a5568;
+            border-radius: 20px;
+            background: rgba(26, 35, 50, 0.8);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .filter-label {
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 0.6rem;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            background: rgba(26, 35, 50, 0.8);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        /* Services Grid - Mobile Optimized */
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .service-card {
+            background: rgba(45, 55, 72, 0.6);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(129, 230, 217, 0.3);
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .service-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(129, 230, 217, 0.2);
+            border-color: #81e6d9;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            position: relative;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 200px;
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .gallery-track {
+            display: flex;
+            width: 400%;
+            height: 100%;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-slide {
+            width: 25%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+        }
+
+        .gallery-dots {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+
+        .gallery-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .gallery-dot.active {
+            background: #81e6d9;
+            transform: scale(1.2);
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .gallery-prev {
+            left: 8px;
+        }
+
+        .gallery-next {
+            right: 8px;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.8rem;
+        }
+
+        .therapist-photo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(45deg, #81e6d9, #fbb6ce);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #1a202c;
+            font-weight: bold;
+        }
+
+        .service-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e2e8f0;
+            margin-bottom: 0.4rem;
+        }
+
+        .therapist-name {
+            color: #81e6d9;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .service-location {
+            color: #a0aec0;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .service-description {
+            color: #a0aec0;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .service-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .service-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #81e6d9;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .contact-btn {
+            padding: 0.5rem 0.8rem;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .contact-btn:hover {
+            background: #16a34a;
+            transform: scale(1.05);
+        }
+
+        .book-btn {
+            padding: 0.5rem 0.8rem;
+            background: #81e6d9;
+            color: #1a202c;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .book-btn:hover {
+            background: #4fd1c7;
+            transform: scale(1.05);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #1a2332;
+            margin: 5% auto;
+            padding: 1.5rem;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 400px;
+            border: 2px solid #81e6d9;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #a0aec0;
+            float: right;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #81e6d9;
+        }
+
+        .modal-title {
+            color: #81e6d9;
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #e2e8f0;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            background: rgba(26, 35, 50, 0.8);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #81e6d9;
+            box-shadow: 0 0 10px rgba(129, 230, 217, 0.3);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .btn-full {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.8rem;
+        }
+
+        /* Image Preview Modal */
+        .image-preview-modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .image-preview-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-image {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+        }
+
+        .image-preview-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 3000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: #22c55e;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .toast.info {
+            background: #3b82f6;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #4a5568;
+            border-radius: 50%;
+            border-top-color: #81e6d9;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Hidden sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .modal-content {
+                max-width: 500px;
+                padding: 2rem;
+            }
+
+            .filters-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .services-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .filters-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo" onclick="showHero()">🌸 KusiRelax</div>
+            
+            <!-- Guest buttons -->
+            <div class="nav-buttons" id="guestButtons">
+                <button class="btn btn-secondary" onclick="openModal('loginModal')">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="btn btn-primary" onclick="openModal('registerModal')">
+                    <i class="fas fa-user-plus"></i> Registro
+                </button>
+            </div>
+
+            <!-- User info -->
+            <div class="user-info" id="userInfo">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div>
+                    <div id="userName" style="font-size: 0.8rem;">Usuario</div>
+                    <div style="font-size: 0.7rem; color: #a0aec0;" id="userType">Cliente</div>
+                </div>
+                <button class="logout-btn" onclick="logout()" title="Cerrar Sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero section active" id="heroSection">
+            <h1>Tu bienestar es nuestra misión</h1>
+            <p>Conecta con los mejores terapeutas de Cusco</p>
+            <div style="display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="openModal('registerModal')">
+                    <i class="fas fa-leaf"></i> Empezar Gratis
+                </button>
+                <button class="btn btn-secondary" onclick="showDashboard()">
+                    <i class="fas fa-search"></i> Ver Servicios
+                </button>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section class="dashboard section" id="dashboardSection">
+            <h1 class="dashboard-title">Encuentra tu servicio ideal</h1>
+            
+            <!-- Filters -->
+            <div class="filters">
+                <h3><i class="fas fa-filter"></i> Filtros</h3>
+                
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Buscar servicios..." id="searchInput">
+                </div>
+
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Tipo de Servicio</label>
+                        <select class="filter-select" id="categoryFilter">
+                            <option value="">Todos</option>
+                            <option value="masaje">Masajes</option>
+                            <option value="spa">Spa</option>
+                            <option value="yoga">Yoga</option>
+                            <option value="meditacion">Meditación</option>
+                            <option value="reiki">Reiki</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Ubicación</label>
+                        <select class="filter-select" id="locationFilter">
+                            <option value="">Todas</option>
+                            <option value="cusco centro">Centro</option>
+                            <option value="san blas">San Blas</option>
+                            <option value="wanchaq">Wanchaq</option>
+                            <option value="santiago">Santiago</option>
+                            <option value="domicilio">Domicilio</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <button class="btn btn-primary" onclick="applyFilters()" style="margin-top: 1.4rem;">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="services-grid" id="servicesGrid">
+                <!-- Services will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2 class="modal-title">Iniciar Sesión</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="loginEmail" required placeholder="tu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña:</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    Entrar
+                    <div class="loading" id="loginLoading"></div>
+                </button>
+                <p style="text-align: center; margin-top: 1rem; color: #a0aec0; font-size: 0.8rem;">
+                    ¿No tienes cuenta? <a href="#" onclick="switchModal('loginModal', 'registerModal')" style="color: #81e6d9;">Regístrate aquí</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2 class="modal-title">Crear Cuenta</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Tipo de Usuario:</label>
+                    <select id="registerType" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="cliente">Cliente - Busco servicios</option>
+                        <option value="terapeuta">Terapeuta - Ofrezco servicios</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nombre:</label>
+                    <input type="text" id="registerName" required placeholder="Tu nombre">
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="registerEmail" required placeholder="tu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono:</label>
+                    <input type="tel" id="registerPhone" required placeholder="+51 999 999 999">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña:</label>
+                    <input type="password" id="registerPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    Crear Cuenta
+                    <div class="loading" id="registerLoading"></div>
+                </button>
+                <p style="text-align: center; margin-top: 1rem; color: #a0aec0; font-size: 0.8rem;">
+                    ¿Ya tienes cuenta? <a href="#" onclick="switchModal('registerModal', 'loginModal')" style="color: #81e6d9;">Inicia sesión</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('bookingModal')">&times;</span>
+            <h2 class="modal-title" id="bookingTitle">Reservar Servicio</h2>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label>Fecha:</label>
+                    <input type="date" id="bookingDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Hora:</label>
+                    <select id="bookingTime" required>
+                        <option value="">Seleccionar hora...</option>
+                        <option value="09:00">09:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="14:00">02:00 PM</option>
+                        <option value="15:00">03:00 PM</option>
+                        <option value="16:00">04:00 PM</option>
+                        <option value="17:00">05:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ubicación:</label>
+                    <select id="bookingLocation" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="centro">En el centro del terapeuta</option>
+                        <option value="domicilio">A domicilio (+S/ 20)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notas (opcional):</label>
+                    <textarea id="bookingNotes" placeholder="Alguna preferencia especial..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    Confirmar Reserva
+                    <div class="loading" id="bookingLoading"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div id="imagePreviewModal" class="image-preview-modal">
+        <div class="image-preview-content">
+            <span class="image-preview-close" onclick="closeImagePreview()">&times;</span>
+            <img id="previewImage" class="preview-image" src="" alt="Preview">
+        </div>
+    </div>
+
+    <script>
+        // KusiRelax Mobile System
+        class KusiRelax {
+            constructor() {
+                this.currentUser = JSON.parse(localStorage.getItem('kr_user') || 'null');
+                this.users = JSON.parse(localStorage.getItem('kr_users') || '[]');
+                this.services = JSON.parse(localStorage.getItem('kr_services') || '[]');
+                this.bookings = JSON.parse(localStorage.getItem('kr_bookings') || '[]');
+                
+                this.init();
+            }
+
+            init() {
+                this.generateData();
+                this.setupEvents();
+                this.updateUI();
+                this.loadServices();
+            }
+
+            generateData() {
+                if (this.users.length === 0) {
+                    this.users = [
+                        { id: 1, name: 'María García', email: 'maria@test.com', phone: '987654321', type: 'cliente' },
+                        { id: 2, name: 'Ana Rodríguez', email: 'ana@test.com', phone: '987654322', type: 'terapeuta' },
+                        { id: 3, name: 'Carlos Silva', email: 'carlos@test.com', phone: '987654323', type: 'terapeuta' }
+                    ];
+                    localStorage.setItem('kr_users', JSON.stringify(this.users));
+                }
+
+                if (this.services.length === 0) {
+                    this.services = [
+                        {
+                            id: 1,
+                            name: 'Masaje Relajante con Aromaterapia',
+                            description: 'Masaje corporal completo con aceites esenciales para reducir estrés y tensión muscular.',
+                            price: 180,
+                            duration: 60,
+                            category: 'masaje',
+                            therapistId: 2,
+                            therapistName: 'Ana Rodríguez',
+                            therapistPhone: '+51 987 654 322',
+                            location: 'Cusco Centro',
+                            address: 'Av. El Sol 123',
+                            images: [
+                                'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1591343395082-e120087004b4?w=400&h=300&fit=crop'
+                            ]
+                        },
+                        {
+                            id: 2,
+                            name: 'Yoga Personalizada y Meditación',
+                            description: 'Clase personalizada de yoga seguida de meditación guiada para equilibrio mental y físico.',
+                            price: 120,
+                            duration: 90,
+                            category: 'yoga',
+                            therapistId: 3,
+                            therapistName: 'Carlos Silva',
+                            therapistPhone: '+51 987 654 323',
+                            location: 'San Blas',
+                            address: 'Calle Hatunrumiyoc 456',
+                            images: [
+                                'https://images.unsplash.com/photo-1506629905607-5446a36cf653?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1591343395082-e120087004b4?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=400&h=300&fit=crop'
+                            ]
+                        },
+                        {
+                            id: 3,
+                            name: 'Tratamiento Facial Spa',
+                            description: 'Limpieza facial profunda con mascarilla hidratante y aromaterapia relajante.',
+                            price: 150,
+                            duration: 75,
+                            category: 'spa',
+                            therapistId: 2,
+                            therapistName: 'Ana Rodríguez',
+                            therapistPhone: '+51 987 654 322',
+                            location: 'Cusco Centro',
+                            address: 'Av. El Sol 123',
+                            images: [
+                                'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop'
+                            ]
+                        },
+                        {
+                            id: 4,
+                            name: 'Masaje a Domicilio Premium',
+                            description: 'Servicio completo de masaje terapéutico en tu hogar con equipos profesionales.',
+                            price: 250,
+                            duration: 90,
+                            category: 'masaje',
+                            therapistId: 3,
+                            therapistName: 'Carlos Silva',
+                            therapistPhone: '+51 987 654 323',
+                            location: 'A domicilio',
+                            address: 'Servicio a domicilio',
+                            images: [
+                                'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1591343395082-e120087004b4?w=400&h=300&fit=crop'
+                            ]
+                        },
+                        {
+                            id: 5,
+                            name: 'Terapia de Reiki Energético',
+                            description: 'Sesión de sanación energética para equilibrar chakras y liberar bloqueos emocionales.',
+                            price: 140,
+                            duration: 60,
+                            category: 'reiki',
+                            therapistId: 2,
+                            therapistName: 'Ana Rodríguez',
+                            therapistPhone: '+51 987 654 322',
+                            location: 'Cusco Centro',
+                            address: 'Av. El Sol 123',
+                            images: [
+                                'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1591343395082-e120087004b4?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop'
+                            ]
+                        },
+                        {
+                            id: 6,
+                            name: 'Meditación Mindfulness Grupal',
+                            description: 'Sesiones grupales de meditación mindfulness para reducir ansiedad y estrés diario.',
+                            price: 80,
+                            duration: 45,
+                            category: 'meditacion',
+                            therapistId: 3,
+                            therapistName: 'Carlos Silva',
+                            therapistPhone: '+51 987 654 323',
+                            location: 'San Blas',
+                            address: 'Calle Hatunrumiyoc 456',
+                            images: [
+                                'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=400&h=300&fit=crop',
+                                'https://images.unsplash.com/photo-1506629905607-5446a36cf653?w=400&h=300&fit=crop'
+                            ]
+                        }
+                    ];
+                    localStorage.setItem('kr_services', JSON.stringify(this.services));
+                }
+            }
+
+            setupEvents() {
+                // Login form
+                document.getElementById('loginForm').onsubmit = (e) => {
+                    e.preventDefault();
+                    this.login();
+                };
+
+                // Register form
+                document.getElementById('registerForm').onsubmit = (e) => {
+                    e.preventDefault();
+                    this.register();
+                };
+
+                // Booking form
+                document.getElementById('bookingForm').onsubmit = (e) => {
+                    e.preventDefault();
+                    this.book();
+                };
+
+                // Search
+                document.getElementById('searchInput').oninput = (e) => {
+                    this.search(e.target.value);
+                };
+
+                // Set min date for booking
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('bookingDate').min = today;
+
+                // Modal close on outside click
+                window.onclick = (e) => {
+                    if (e.target.classList.contains('modal') || e.target.classList.contains('image-preview-modal')) {
+                        e.target.style.display = 'none';
+                    }
+                };
+            }
+
+            async login() {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+
+                this.showLoading('loginLoading', true);
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                const user = this.users.find(u => u.email === email);
+                if (user) {
+                    this.currentUser = user;
+                    localStorage.setItem('kr_user', JSON.stringify(user));
+                    this.updateUI();
+                    this.closeModal('loginModal');
+                    this.showToast(`Bienvenido ${user.name}!`, 'success');
+                    
+                    if (user.type === 'cliente') {
+                        setTimeout(() => showDashboard(), 1000);
+                    }
+                } else {
+                    this.showToast('Usuario no encontrado', 'error');
+                }
+
+                this.showLoading('loginLoading', false);
+            }
+
+            async register() {
+                const type = document.getElementById('registerType').value;
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const phone = document.getElementById('registerPhone').value;
+                const password = document.getElementById('registerPassword').value;
+
+                if (!type || !name || !email || !phone || !password) {
+                    this.showToast('Completa todos los campos', 'error');
+                    return;
+                }
+
+                this.showLoading('registerLoading', true);
+
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                if (this.users.find(u => u.email === email)) {
+                    this.showToast('Email ya registrado', 'error');
+                    this.showLoading('registerLoading', false);
+                    return;
+                }
+
+                const newUser = {
+                    id: this.users.length + 1,
+                    name, email, phone, type
+                };
+
+                this.users.push(newUser);
+                localStorage.setItem('kr_users', JSON.stringify(this.users));
+
+                this.currentUser = newUser;
+                localStorage.setItem('kr_user', JSON.stringify(newUser));
+
+                this.updateUI();
+                this.closeModal('registerModal');
+                this.showToast(`¡Cuenta creada! Bienvenido ${name}!`, 'success');
+
+                if (type === 'cliente') {
+                    setTimeout(() => showDashboard(), 1000);
+                }
+
+                this.showLoading('registerLoading', false);
+            }
+
+            async book() {
+                if (!this.currentUser) {
+                    this.showToast('Inicia sesión para reservar', 'error');
+                    return;
+                }
+
+                const serviceId = parseInt(document.getElementById('bookingForm').dataset.serviceId);
+                const date = document.getElementById('bookingDate').value;
+                const time = document.getElementById('bookingTime').value;
+                const location = document.getElementById('bookingLocation').value;
+                const notes = document.getElementById('bookingNotes').value;
+
+                this.showLoading('bookingLoading', true);
+
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                const service = this.services.find(s => s.id === serviceId);
+                const extraCost = location === 'domicilio' ? 20 : 0;
+                const totalPrice = service.price + extraCost;
+
+                const booking = {
+                    id: Date.now(),
+                    userId: this.currentUser.id,
+                    serviceId,
+                    serviceName: service.name,
+                    therapistName: service.therapistName,
+                    therapistPhone: service.therapistPhone,
+                    date, time, location, notes,
+                    price: totalPrice,
+                    status: 'confirmada'
+                };
+
+                if (!this.bookings) this.bookings = [];
+                this.bookings.push(booking);
+                localStorage.setItem('kr_bookings', JSON.stringify(this.bookings));
+
+                this.closeModal('bookingModal');
+                this.showToast(`¡Reserva confirmada! Total: S/ ${totalPrice}`, 'success');
+                
+                setTimeout(() => {
+                    this.showToast(`Contacta: ${service.therapistPhone}`, 'info');
+                }, 2000);
+
+                this.showLoading('bookingLoading', false);
+            }
+
+            search(query) {
+                if (query.length > 2) {
+                    this.filterServices({ search: query.toLowerCase() });
+                } else if (query.length === 0) {
+                    this.loadServices();
+                }
+            }
+
+            loadServices() {
+                this.renderServices(this.services);
+            }
+
+            filterServices(filters = {}) {
+                let filtered = [...this.services];
+
+                if (filters.search) {
+                    filtered = filtered.filter(s =>
+                        s.name.toLowerCase().includes(filters.search) ||
+                        s.description.toLowerCase().includes(filters.search) ||
+                        s.therapistName.toLowerCase().includes(filters.search) ||
+                        s.category.toLowerCase().includes(filters.search)
+                    );
+                }
+
+                if (filters.category) {
+                    filtered = filtered.filter(s => s.category === filters.category);
+                }
+
+                if (filters.location) {
+                    filtered = filtered.filter(s => 
+                        s.location.toLowerCase().includes(filters.location.toLowerCase())
+                    );
+                }
+
+                this.renderServices(filtered);
+            }
+
+            renderServices(services) {
+                const grid = document.getElementById('servicesGrid');
+                
+                if (services.length === 0) {
+                    grid.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: #a0aec0; grid-column: 1 / -1;">
+                            <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                            <h3>No se encontraron servicios</h3>
+                            <p>Intenta ajustar los filtros</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = services.map(service => this.createServiceCard(service)).join('');
+                
+                // Initialize galleries after rendering
+                setTimeout(() => {
+                    services.forEach(service => {
+                        this.initializeGallery(service.id);
+                    });
+                }, 100);
+            }
+
+            createServiceCard(service) {
+                return `
+                    <div class="service-card">
+                        <div class="image-gallery" id="gallery-${service.id}">
+                            <div class="gallery-container">
+                                <div class="gallery-track" id="track-${service.id}">
+                                    ${service.images.map((img, index) => `
+                                        <div class="gallery-slide" 
+                                             style="background-image: url('${img}')"
+                                             onclick="showImagePreview('${img}')">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <button class="gallery-nav gallery-prev" onclick="app.prevImage(${service.id})">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="gallery-nav gallery-next" onclick="app.nextImage(${service.id})">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="gallery-dots" id="dots-${service.id}">
+                                ${service.images.map((_, index) => `
+                                    <div class="gallery-dot ${index === 0 ? 'active' : ''}" 
+                                         onclick="app.goToImage(${service.id}, ${index})">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="service-header">
+                            <div class="therapist-photo">
+                                ${service.therapistName.charAt(0)}
+                            </div>
+                        </div>
+                        
+                        <div class="service-name">${service.name}</div>
+                        <div class="therapist-name">Por ${service.therapistName}</div>
+                        <div class="service-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${service.location}
+                        </div>
+                        <div class="service-description">${service.description}</div>
+                        
+                        <div class="service-footer">
+                            <div class="service-price">S/ ${service.price}</div>
+                            <div class="service-actions">
+                                <a href="tel:${service.therapistPhone}" class="contact-btn">
+                                    <i class="fas fa-phone"></i> Llamar
+                                </a>
+                                <button class="book-btn" onclick="openBooking(${service.id})">
+                                    <i class="fas fa-calendar"></i> Reservar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            initializeGallery(serviceId) {
+                const service = this.services.find(s => s.id === serviceId);
+                if (!service) return;
+
+                if (!service.currentImageIndex) {
+                    service.currentImageIndex = 0;
+                }
+            }
+
+            nextImage(serviceId) {
+                const service = this.services.find(s => s.id === serviceId);
+                if (!service) return;
+
+                service.currentImageIndex = (service.currentImageIndex + 1) % service.images.length;
+                this.updateGallery(serviceId);
+            }
+
+            prevImage(serviceId) {
+                const service = this.services.find(s => s.id === serviceId);
+                if (!service) return;
+
+                service.currentImageIndex = service.currentImageIndex === 0 
+                    ? service.images.length - 1 
+                    : service.currentImageIndex - 1;
+                this.updateGallery(serviceId);
+            }
+
+            goToImage(serviceId, index) {
+                const service = this.services.find(s => s.id === serviceId);
+                if (!service) return;
+
+                service.currentImageIndex = index;
+                this.updateGallery(serviceId);
+            }
+
+            updateGallery(serviceId) {
+                const service = this.services.find(s => s.id === serviceId);
+                if (!service) return;
+
+                const track = document.getElementById(`track-${serviceId}`);
+                const dots = document.getElementById(`dots-${serviceId}`);
+                
+                if (track) {
+                    track.style.transform = `translateX(-${service.currentImageIndex * 25}%)`;
+                }
+
+                if (dots) {
+                    dots.querySelectorAll('.gallery-dot').forEach((dot, index) => {
+                        dot.classList.toggle('active', index === service.currentImageIndex);
+                    });
+                }
+            }
+
+            openBooking(serviceId) {
+                if (!this.currentUser) {
+                    this.showToast('Inicia sesión para reservar', 'error');
+                    openModal('loginModal');
+                    return;
+                }
+
+                const service = this.services.find(s => s.id === serviceId);
+                document.getElementById('bookingTitle').textContent = `Reservar: ${service.name}`;
+                document.getElementById('bookingForm').dataset.serviceId = serviceId;
+                document.getElementById('bookingForm').reset();
+                openModal('bookingModal');
+            }
+
+            updateUI() {
+                const guestButtons = document.getElementById('guestButtons');
+                const userInfo = document.getElementById('userInfo');
+
+                if (this.currentUser) {
+                    guestButtons.style.display = 'none';
+                    userInfo.style.display = 'flex';
+                    
+                    document.getElementById('userAvatar').textContent = this.currentUser.name.charAt(0);
+                    document.getElementById('userName').textContent = this.currentUser.name;
+                    document.getElementById('userType').textContent = this.currentUser.type.charAt(0).toUpperCase() + this.currentUser.type.slice(1);
+                } else {
+                    guestButtons.style.display = 'flex';
+                    userInfo.style.display = 'none';
+                }
+            }
+
+            logout() {
+                this.currentUser = null;
+                localStorage.removeItem('kr_user');
+                this.updateUI();
+                showHero();
+                this.showToast('Sesión cerrada', 'success');
+            }
+
+            showLoading(id, show) {
+                document.getElementById(id).style.display = show ? 'inline-block' : 'none';
+            }
+
+            showToast(message, type = 'info') {
+                document.querySelectorAll('.toast').forEach(t => t.remove());
+
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+
+                setTimeout(() => toast.classList.add('show'), 100);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            closeModal(id) {
+                document.getElementById(id).style.display = 'none';
+            }
+        }
+
+        // Global functions
+        function showHero() {
+            document.getElementById('heroSection').classList.add('active');
+            document.getElementById('dashboardSection').classList.remove('active');
+        }
+
+        function showDashboard() {
+            document.getElementById('heroSection').classList.remove('active');
+            document.getElementById('dashboardSection').classList.add('active');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function switchModal(closeId, openId) {
+            closeModal(closeId);
+            setTimeout(() => openModal(openId), 100);
+        }
+
+        function applyFilters() {
+            const filters = {
+                category: document.getElementById('categoryFilter').value,
+                location: document.getElementById('locationFilter').value
+            };
+
+            Object.keys(filters).forEach(key => {
+                if (!filters[key]) {
+                    delete filters[key];
+                }
+            });
+
+            app.filterServices(filters);
+            const resultsCount = document.getElementById('servicesGrid').children.length;
+            app.showToast(`${resultsCount} servicios encontrados`, 'info');
+        }
+
+        function openBooking(serviceId) {
+            app.openBooking(serviceId);
+        }
+
+        function logout() {
+            app.logout();
+        }
+
+        function showImagePreview(imageUrl) {
+            document.getElementById('previewImage').src = imageUrl;
+            document.getElementById('imagePreviewModal').style.display = 'block';
+        }
+
+        function closeImagePreview() {
+            document.getElementById('imagePreviewModal').style.display = 'none';
+        }
+
+        // Initialize app
+        let app;
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new KusiRelax();
+            
+            setTimeout(() => {
+                app.showToast('¡Bienvenido a KusiRelax!', 'success');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin KusiRelax</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--primary:#81e6d9;--secondary:#bee3f8;--dark:#0a0f1c;--card:#1a2332;--text:#e2e8f0;--muted:#a0aec0;--success:#22c55e;--warning:#f59e0b;--error:#ef4444}
+        body{font-family:Arial,sans-serif;background:linear-gradient(135deg,var(--dark),#243447);color:var(--text);display:flex;min-height:100vh}
+        
+        .sidebar{width:250px;background:rgba(26,35,50,.95);border-right:1px solid rgba(129,230,217,.2);position:fixed;height:100vh;overflow-y:auto;z-index:1000;transition:.3s}
+        .sidebar.collapsed{width:60px}
+        .sidebar-header{padding:1.5rem;border-bottom:1px solid rgba(129,230,217,.1)}
+        .logo{font-size:1.4rem;font-weight:bold;color:var(--primary)}
+        .sidebar.collapsed .logo{display:none}
+        .nav-menu{list-style:none;padding:1rem 0}
+        .nav-link{display:flex;align-items:center;gap:1rem;padding:1rem 1.5rem;color:var(--muted);text-decoration:none;transition:.3s;border-right:3px solid transparent}
+        .sidebar.collapsed .nav-link{padding:1rem;justify-content:center}
+        .nav-link:hover,.nav-link.active{color:var(--primary);background:rgba(129,230,217,.1);border-right-color:var(--primary)}
+        .nav-text{font-weight:500}
+        .sidebar.collapsed .nav-text{display:none}
+        .nav-badge{background:var(--error);color:#fff;font-size:.7rem;padding:.2rem .5rem;border-radius:10px;margin-left:auto}
+        .sidebar.collapsed .nav-badge{position:absolute;top:8px;right:8px}
+        
+        .main-content{flex:1;margin-left:250px;padding:1.5rem;transition:.3s}
+        .main-content.expanded{margin-left:60px}
+        
+        .header{display:flex;justify-content:space-between;align-items:center;background:rgba(45,55,72,.6);padding:1rem 2rem;border-radius:15px;margin-bottom:2rem;border:1px solid rgba(129,230,217,.2)}
+        .header-title{font-size:1.8rem;font-weight:600}
+        .header-actions{display:flex;gap:1rem;align-items:center}
+        .search-input{background:rgba(26,35,50,.8);border:2px solid rgba(129,230,217,.3);border-radius:10px;padding:.7rem 1rem;color:var(--text);width:250px}
+        .search-input:focus{outline:none;border-color:var(--primary)}
+        .admin-avatar{width:40px;height:40px;background:linear-gradient(var(--primary),var(--secondary));border-radius:50%;display:flex;align-items:center;justify-content:center;color:#000;font-weight:bold}
+        
+        .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem}
+        .stat-card{background:rgba(45,55,72,.6);padding:2rem;border-radius:15px;border:1px solid rgba(129,230,217,.2);transition:.3s}
+        .stat-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(129,230,217,.2)}
+        .stat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+        .stat-title{color:var(--muted);font-size:.9rem;text-transform:uppercase;font-weight:500}
+        .stat-icon{width:45px;height:45px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#000}
+        .stat-icon.primary{background:linear-gradient(var(--primary),var(--secondary))}
+        .stat-icon.success{background:linear-gradient(var(--success),#16a34a)}
+        .stat-icon.warning{background:linear-gradient(var(--warning),#d97706)}
+        .stat-icon.error{background:linear-gradient(var(--error),#dc2626)}
+        .stat-value{font-size:2.2rem;font-weight:bold;margin-bottom:.5rem}
+        .stat-change{font-size:.8rem;display:flex;align-items:center;gap:.3rem}
+        .stat-change.positive{color:var(--success)}
+        .stat-change.negative{color:var(--error)}
+        
+        .content-section{display:none}
+        .content-section.active{display:block;animation:fadeIn .5s}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        
+        .table-container{background:rgba(45,55,72,.6);border-radius:15px;overflow:hidden;margin-bottom:2rem;border:1px solid rgba(129,230,217,.2)}
+        .table-header{padding:1rem 2rem;background:rgba(26,35,50,.8);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+        .table-title{font-size:1.2rem;font-weight:600}
+        .table-actions{display:flex;gap:1rem;flex-wrap:wrap}
+        .table{width:100%;border-collapse:collapse}
+        .table th,.table td{padding:.8rem 1.5rem;text-align:left;border-bottom:1px solid rgba(129,230,217,.1)}
+        .table th{background:rgba(26,35,50,.8);color:var(--muted);font-weight:600;text-transform:uppercase;font-size:.8rem}
+        .table tr:hover{background:rgba(129,230,217,.05)}
+        
+        .btn{padding:.7rem 1.2rem;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:.3s;display:inline-flex;align-items:center;gap:.5rem;font-size:.9rem;text-decoration:none}
+        .btn:hover{transform:translateY(-2px)}
+        .btn-primary{background:linear-gradient(var(--primary),var(--secondary));color:#000}
+        .btn-success{background:var(--success);color:#fff}
+        .btn-warning{background:var(--warning);color:#fff}
+        .btn-danger{background:var(--error);color:#fff}
+        .btn-secondary{background:rgba(129,230,217,.1);color:var(--primary);border:1px solid var(--primary)}
+        .btn-sm{padding:.5rem .8rem;font-size:.8rem}
+        
+        .status-badge{padding:.3rem .7rem;border-radius:10px;font-size:.7rem;font-weight:600;text-transform:uppercase}
+        .status-active{background:rgba(34,197,94,.2);color:var(--success)}
+        .status-pending{background:rgba(245,158,11,.2);color:var(--warning)}
+        .status-inactive{background:rgba(239,68,68,.2);color:var(--error)}
+        .status-verified{background:rgba(59,130,246,.2);color:var(--secondary)}
+        .status-suspended{background:rgba(245,158,11,.2);color:var(--warning)}
+        .status-deleted{background:rgba(107,114,128,.2);color:var(--muted)}
+        
+        .form-container{background:rgba(45,55,72,.6);padding:2rem;border-radius:15px;margin-bottom:2rem;border:1px solid rgba(129,230,217,.2)}
+        .form-group{margin-bottom:1rem}
+        .form-label{display:block;margin-bottom:.5rem;font-weight:600;font-size:.9rem}
+        .form-input,.form-select,.form-textarea{width:100%;padding:.8rem;border:2px solid rgba(129,230,217,.3);border-radius:10px;background:rgba(26,35,50,.8);color:var(--text);transition:.3s}
+        .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 15px rgba(129,230,217,.3)}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        
+        .modal{display:none;position:fixed;z-index:3000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.8);backdrop-filter:blur(10px)}
+        .modal-content{background:rgba(26,35,50,.98);margin:5% auto;padding:2rem;border-radius:15px;width:90%;max-width:600px;border:2px solid var(--primary);animation:modalSlide .4s}
+        @keyframes modalSlide{from{opacity:0;transform:translateY(-50px)}to{opacity:1;transform:translateY(0)}}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+        .modal-title{font-size:1.5rem;font-weight:600}
+        .close{color:var(--muted);font-size:1.8rem;font-weight:bold;cursor:pointer;transition:.3s}
+        .close:hover{color:var(--primary);transform:rotate(90deg)}
+        
+        .toast{position:fixed;top:20px;right:20px;padding:1rem 1.5rem;border-radius:10px;z-index:5000;color:#fff;font-weight:600;max-width:300px;transform:translateX(100%);opacity:0;transition:.3s}
+        .toast.show{transform:translateX(0);opacity:1}
+        .toast.success{background:var(--success)}
+        .toast.error{background:var(--error)}
+        .toast.warning{background:var(--warning)}
+        .toast.info{background:var(--primary)}
+        
+        .dropdown{position:relative;display:inline-block}
+        .dropdown-content{display:none;position:absolute;right:0;top:100%;background:var(--card);border:1px solid var(--primary);border-radius:8px;min-width:180px;z-index:1000;box-shadow:0 8px 25px rgba(0,0,0,.3)}
+        .dropdown-content a{display:block;padding:.5rem 1rem;color:var(--text);text-decoration:none;cursor:pointer;border-bottom:1px solid rgba(129,230,217,.1);transition:.3s}
+        .dropdown-content a:hover{background:rgba(129,230,217,.1)}
+        
+        .filter-panel{background:rgba(45,55,72,.6);padding:1.5rem;border-radius:15px;margin-bottom:1.5rem;border:1px solid rgba(129,230,217,.2)}
+        .filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+        
+        .audit-entry{padding:1rem;border-left:3px solid var(--primary);margin-bottom:1rem;background:rgba(26,35,50,.5);border-radius:0 8px 8px 0}
+        .audit-timestamp{font-size:.8rem;color:var(--muted)}
+        .audit-action{font-weight:600;margin:.5rem 0}
+        .audit-description{color:var(--muted);font-size:.9rem}
+        
+        .loading{display:none;width:18px;height:18px;border:3px solid rgba(129,230,217,.3);border-radius:50%;border-top-color:var(--primary);animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        
+        @media(max-width:768px){
+            .sidebar{transform:translateX(-100%)}
+            .sidebar.open{transform:translateX(0)}
+            .main-content{margin-left:0}
+            .header{flex-direction:column;gap:1rem}
+            .search-input{width:100%}
+            .form-row{grid-template-columns:1fr}
+            .dashboard-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+            .table th,.table td{padding:.6rem .8rem;font-size:.9rem}
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🌸 KusiRelax Admin</div>
+            <button class="toggle-btn" onclick="toggleSidebar()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;margin-left:auto">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#" class="nav-link active" onclick="showSection('dashboard')"><i class="fas fa-chart-line"></i><span class="nav-text">Dashboard</span></a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('users')"><i class="fas fa-users"></i><span class="nav-text">Usuarios</span><span class="nav-badge" id="usersBadge">125</span></a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('therapists')"><i class="fas fa-user-md"></i><span class="nav-text">Terapeutas</span><span class="nav-badge" id="therapistsBadge">12</span></a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('services')"><i class="fas fa-spa"></i><span class="nav-text">Servicios</span><span class="nav-badge" id="servicesBadge">48</span></a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('bookings')"><i class="fas fa-calendar-check"></i><span class="nav-text">Reservas</span><span class="nav-badge" id="bookingsBadge">8</span></a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('payments')"><i class="fas fa-credit-card"></i><span class="nav-text">Pagos</span></a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('reports')"><i class="fas fa-file-alt"></i><span class="nav-text">Reportes</span></a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('audit')"><i class="fas fa-shield-alt"></i><span class="nav-text">Auditoría</span></a></li>
+            <li><a href="#" class="nav-link" onclick="showSection('settings')"><i class="fas fa-cog"></i><span class="nav-text">Configuración</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="header-title" id="pageTitle">Dashboard General</h1>
+            <div class="header-actions">
+                <input type="text" class="search-input" placeholder="Buscar..." id="globalSearch">
+                <div class="admin-avatar" title="Administrador">A</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="content-section active">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Usuarios</div>
+                        <div class="stat-icon primary"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="stat-value" id="totalUsers">1,247</div>
+                    <div class="stat-change positive"><i class="fas fa-arrow-up"></i> +12% vs mes anterior</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Terapeutas Activos</div>
+                        <div class="stat-icon success"><i class="fas fa-user-md"></i></div>
+                    </div>
+                    <div class="stat-value" id="activeTherapists">24</div>
+                    <div class="stat-change positive"><i class="fas fa-arrow-up"></i> +3 nuevos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Reservas Mes</div>
+                        <div class="stat-icon warning"><i class="fas fa-calendar-check"></i></div>
+                    </div>
+                    <div class="stat-value" id="monthlyBookings">342</div>
+                    <div class="stat-change positive"><i class="fas fa-arrow-up"></i> +8% vs anterior</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Ingresos Mes</div>
+                        <div class="stat-icon error"><i class="fas fa-dollar-sign"></i></div>
+                    </div>
+                    <div class="stat-value" id="monthlyRevenue">S/ 45,320</div>
+                    <div class="stat-change positive"><i class="fas fa-arrow-up"></i> +15% vs anterior</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Acciones Rápidas</div>
+                </div>
+                <div style="padding:1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+                    <button class="btn btn-warning" onclick="showPendingApprovals()"><i class="fas fa-clock"></i> Revisar Pendientes (6)</button>
+                    <button class="btn btn-primary" onclick="runSystemCheck()"><i class="fas fa-stethoscope"></i> Diagnóstico Sistema</button>
+                    <button class="btn btn-success" onclick="sendBulkNotification()"><i class="fas fa-bullhorn"></i> Notificación Masiva</button>
+                    <button class="btn btn-danger" onclick="runMaintenance()"><i class="fas fa-tools"></i> Mantenimiento</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Actividad Reciente</div>
+                    <button class="btn btn-primary btn-sm" onclick="refreshActivity()"><i class="fas fa-refresh"></i> Actualizar</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr><th>Tiempo</th><th>Usuario</th><th>Acción</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody id="activityTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Users Section -->
+        <section id="users-section" class="content-section">
+            <div class="filter-panel">
+                <div class="filter-grid">
+                    <div><label class="form-label">Estado</label><select class="form-select" id="userStatusFilter"><option value="">Todos</option><option value="active">Activos</option><option value="suspended">Suspendidos</option><option value="deleted">Eliminados</option></select></div>
+                    <div><label class="form-label">Tipo</label><select class="form-select" id="userTypeFilter"><option value="">Todos</option><option value="cliente">Clientes</option><option value="terapeuta">Terapeutas</option></select></div>
+                    <div><button class="btn btn-primary" onclick="applyUserFilters()" style="margin-top:1.7rem"><i class="fas fa-filter"></i> Filtrar</button></div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Gestión de Usuarios</div>
+                    <div class="table-actions">
+                        <button class="btn btn-warning btn-sm" onclick="showBulkActions()" id="bulkBtn" style="display:none"><i class="fas fa-tasks"></i> Acciones Masivas</button>
+                        <button class="btn btn-secondary btn-sm" onclick="exportUsers()"><i class="fas fa-download"></i> Exportar</button>
+                        <button class="btn btn-primary btn-sm" onclick="openUserModal()"><i class="fas fa-plus"></i> Nuevo</button>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" onchange="toggleAllSelection()"> ID</th>
+                            <th>Usuario</th><th>Email</th><th>Tipo</th><th>Estado</th><th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Therapists Section -->
+        <section id="therapists-section" class="content-section">
+            <div class="dashboard-grid" style="margin-bottom:2rem">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Verificados</div>
+                        <div class="stat-icon success"><i class="fas fa-check"></i></div>
+                    </div>
+                    <div class="stat-value" id="verifiedCount">18</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Pendientes</div>
+                        <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+                    </div>
+                    <div class="stat-value" id="pendingCount">6</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Rating Promedio</div>
+                        <div class="stat-icon primary"><i class="fas fa-star"></i></div>
+                    </div>
+                    <div class="stat-value">4.7</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Terapeutas Registrados</div>
+                    <div class="table-actions">
+                        <button class="btn btn-warning btn-sm" onclick="filterTherapists('pending')"><i class="fas fa-clock"></i> Pendientes</button>
+                        <button class="btn btn-success btn-sm" onclick="filterTherapists('verified')"><i class="fas fa-check"></i> Verificados</button>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr><th>ID</th><th>Terapeuta</th><th>Especialidad</th><th>Rating</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="therapistsTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services-section" class="content-section">
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Gestión de Servicios</div>
+                    <div class="table-actions">
+                        <button class="btn btn-warning btn-sm" onclick="filterServices('pending')">Pendientes (12)</button>
+                        <button class="btn btn-success btn-sm" onclick="filterServices('approved')">Aprobados (36)</button>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr><th>ID</th><th>Servicio</th><th>Terapeuta</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="servicesTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Bookings Section -->
+        <section id="bookings-section" class="content-section">
+            <div class="dashboard-grid" style="margin-bottom:2rem">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Hoy</div>
+                        <div class="stat-icon primary"><i class="fas fa-calendar-day"></i></div>
+                    </div>
+                    <div class="stat-value">23</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Confirmadas</div>
+                        <div class="stat-icon success"><i class="fas fa-check"></i></div>
+                    </div>
+                    <div class="stat-value">18</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Pendientes</div>
+                        <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+                    </div>
+                    <div class="stat-value">3</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Reservas Recientes</div>
+                    <div class="table-actions">
+                        <select class="form-select" style="width:auto" onchange="filterBookings(this.value)">
+                            <option value="all">Todas</option><option value="today">Hoy</option><option value="pending">Pendientes</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm" onclick="refreshBookings()"><i class="fas fa-refresh"></i></button>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr><th>ID</th><th>Cliente</th><th>Terapeuta</th><th>Servicio</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="bookingsTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Payments Section -->
+        <section id="payments-section" class="content-section">
+            <div class="dashboard-grid" style="margin-bottom:2rem">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Ingresos Hoy</div>
+                        <div class="stat-icon success"><i class="fas fa-dollar-sign"></i></div>
+                    </div>
+                    <div class="stat-value">S/ 2,340</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Comisiones</div>
+                        <div class="stat-icon primary"><i class="fas fa-percentage"></i></div>
+                    </div>
+                    <div class="stat-value">S/ 468</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Pendientes</div>
+                        <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+                    </div>
+                    <div class="stat-value">S/ 1,250</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Transacciones</div>
+                    <div class="table-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="exportPayments()"><i class="fas fa-download"></i> Exportar</button>
+                        <button class="btn btn-warning btn-sm" onclick="processPendingPayments()"><i class="fas fa-clock"></i> Procesar Pendientes</button>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr><th>ID</th><th>Usuario</th><th>Concepto</th><th>Monto</th><th>Método</th><th>Estado</th><th>Fecha</th></tr>
+                    </thead>
+                    <tbody id="paymentsTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports-section" class="content-section">
+            <div class="form-container">
+                <h3 style="margin-bottom:1.5rem">Generador de Reportes</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-select" id="reportType">
+                            <option value="users">Usuarios</option><option value="therapists">Terapeutas</option>
+                            <option value="services">Servicios</option><option value="bookings">Reservas</option>
+                            <option value="payments">Pagos</option><option value="complete">Completo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Período</label>
+                        <select class="form-select" id="reportPeriod">
+                            <option value="today">Hoy</option><option value="week">Semana</option>
+                            <option value="month">Mes</option><option value="year">Año</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Formato</label>
+                    <div style="display:flex;gap:2rem;margin-top:.5rem">
+                        <label><input type="radio" name="format" value="pdf" checked> PDF</label>
+                        <label><input type="radio" name="format" value="excel"> Excel</label>
+                        <label><input type="radio" name="format" value="csv"> CSV</label>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="generateReport()"><i class="fas fa-download"></i> Generar Reporte <div class="loading" id="reportLoading"></div></button>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem">
+                <div class="stat-card" style="cursor:pointer" onclick="quickReport('daily')">
+                    <div class="stat-header">
+                        <div class="stat-title">Reporte Diario</div>
+                        <div class="stat-icon primary"><i class="fas fa-calendar-day"></i></div>
+                    </div>
+                    <p style="color:var(--muted);font-size:.9rem">Actividad del día</p>
+                </div>
+                <div class="stat-card" style="cursor:pointer" onclick="quickReport('weekly')">
+                    <div class="stat-header">
+                        <div class="stat-title">Reporte Semanal</div>
+                        <div class="stat-icon success"><i class="fas fa-calendar-week"></i></div>
+                    </div>
+                    <p style="color:var(--muted);font-size:.9rem">Resumen semanal</p>
+                </div>
+                <div class="stat-card" style="cursor:pointer" onclick="quickReport('financial')">
+                    <div class="stat-header">
+                        <div class="stat-title">Financiero</div>
+                        <div class="stat-icon warning"><i class="fas fa-chart-pie"></i></div>
+                    </div>
+                    <p style="color:var(--muted);font-size:.9rem">Estado financiero</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Audit Section -->
+        <section id="audit-section" class="content-section">
+            <div class="dashboard-grid" style="margin-bottom:2rem">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Eventos Seguridad</div>
+                        <div class="stat-icon error"><i class="fas fa-exclamation-triangle"></i></div>
+                    </div>
+                    <div class="stat-value">3</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Intentos Login</div>
+                        <div class="stat-icon warning"><i class="fas fa-sign-in-alt"></i></div>
+                    </div>
+                    <div class="stat-value">247</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Integridad Datos</div>
+                        <div class="stat-icon success"><i class="fas fa-database"></i></div>
+                    </div>
+                    <div class="stat-value">OK</div>
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-bottom:2rem">
+                <div class="table-header">
+                    <div class="table-title">Herramientas</div>
+                </div>
+                <div style="padding:1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+                    <button class="btn btn-primary" onclick="checkIntegrity()"><i class="fas fa-stethoscope"></i> Verificar Integridad</button>
+                    <button class="btn btn-warning" onclick="scanThreats()"><i class="fas fa-search"></i> Escanear Amenazas</button>
+                    <button class="btn btn-success" onclick="auditReport()"><i class="fas fa-file-shield"></i> Reporte Auditoría</button>
+                    <button class="btn btn-danger" onclick="emergencyCleanup()"><i class="fas fa-broom"></i> Limpieza Emergencia</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Log de Auditoría</div>
+                    <div class="table-actions">
+                        <select class="form-select" style="width:auto" onchange="filterAudit(this.value)">
+                            <option value="all">Todos</option><option value="login">Logins</option><option value="admin">Admin</option><option value="security">Seguridad</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm" onclick="refreshAudit()"><i class="fas fa-refresh"></i></button>
+                    </div>
+                </div>
+                <div style="max-height:400px;overflow-y:auto;padding:1rem" id="auditLog"></div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings-section" class="content-section">
+            <div class="form-container">
+                <h3 style="margin-bottom:2rem">Configuración del Sistema</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+                    <div>
+                        <h4 style="color:var(--primary);margin-bottom:1rem">General</h4>
+                        <div class="form-group">
+                            <label class="form-label">Nombre Plataforma</label>
+                            <input type="text" class="form-input" value="KusiRelax" id="platformName">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Contacto</label>
+                            <input type="email" class="form-input" value="admin@kusirelax.com" id="contactEmail">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Comisión (%)</label>
+                            <input type="number" class="form-input" value="20" id="commission">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color:var(--primary);margin-bottom:1rem">Seguridad</h4>
+                        <div class="form-group">
+                            <label><input type="checkbox" checked style="width:auto"> Notificar registros</label>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" checked style="width:auto"> Alertas seguridad</label>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Max intentos login</label>
+                            <input type="number" class="form-input" value="5" min="3" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tiempo sesión (min)</label>
+                            <input type="number" class="form-input" value="60" min="30" max="480">
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;gap:1rem;margin-top:2rem">
+                    <button class="btn btn-secondary" onclick="resetSettings()"><i class="fas fa-undo"></i> Restaurar</button>
+                    <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Guardar <div class="loading" id="settingsLoading"></div></button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="userModalTitle">Nuevo Usuario</h2>
+                <span class="close" onclick="closeModal('userModal')">&times;</span>
+            </div>
+            <form id="userForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-input" id="userName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="userEmail" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <input type="tel" class="form-input" id="userPhone">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-select" id="userType" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="cliente">Cliente</option>
+                            <option value="terapeuta">Terapeuta</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;gap:1rem;margin-top:1.5rem">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('userModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><span id="userSubmitText">Crear</span><div class="loading" id="userLoading"></div></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Modal -->
+    <div id="bulkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Acciones Masivas</h2>
+                <span class="close" onclick="closeModal('bulkModal')">&times;</span>
+            </div>
+            <p style="margin-bottom:1.5rem"><span id="selectedCount">0</span> usuarios seleccionados.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                <button class="btn btn-success" onclick="bulkAction('activate')"><i class="fas fa-check"></i> Activar</button>
+                <button class="btn btn-warning" onclick="bulkAction('suspend')"><i class="fas fa-pause"></i> Suspender</button>
+                <button class="btn btn-danger" onclick="bulkAction('delete')"><i class="fas fa-trash"></i> Eliminar</button>
+                <button class="btn btn-primary" onclick="bulkAction('notify')"><i class="fas fa-envelope"></i> Notificar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Admin System
+        window.adminSystem = {
+            data: {
+                users: JSON.parse(localStorage.getItem('kusi_users') || '[]'),
+                therapists: JSON.parse(localStorage.getItem('kusi_therapists') || '[]'),
+                services: JSON.parse(localStorage.getItem('kusi_services') || '[]'),
+                bookings: JSON.parse(localStorage.getItem('kusi_bookings') || '[]'),
+                payments: JSON.parse(localStorage.getItem('kusi_payments') || '[]'),
+                audit: JSON.parse(localStorage.getItem('kusi_audit') || '[]'),
+                settings: JSON.parse(localStorage.getItem('kusi_settings') || '{}')
+            },
+            currentView: 'dashboard',
+            selectedUsers: [],
+
+            init() {
+                this.generateSampleData();
+                this.setupEvents();
+                this.loadDashboard();
+                this.showToast('Sistema administrativo cargado', 'success');
+            },
+
+            generateSampleData() {
+                if (this.data.users.length === 0) {
+                    this.data.users = [
+                        {id: 1, name: 'María García', email: 'maria@test.com', phone: '987654321', type: 'cliente', status: 'active', date: '2025-01-10'},
+                        {id: 2, name: 'Carlos Silva', email: 'carlos@test.com', phone: '987654322', type: 'terapeuta', status: 'verified', date: '2025-01-12'},
+                        {id: 3, name: 'Ana López', email: 'ana@test.com', phone: '987654323', type: 'cliente', status: 'suspended', date: '2025-01-15', suspensionReason: 'Comportamiento inadecuado'},
+                        {id: 4, name: 'Roberto Chen', email: 'roberto@test.com', phone: '987654324', type: 'terapeuta', status: 'pending', date: '2025-01-18'}
+                    ];
+                    this.saveData('users');
+                }
+
+                if (this.data.therapists.length === 0) {
+                    this.data.therapists = [
+                        {id: 2, name: 'Carlos Silva', specialty: 'Masajes', rating: 4.8, status: 'verified', earnings: 2400},
+                        {id: 4, name: 'Roberto Chen', specialty: 'Acupuntura', rating: 4.6, status: 'pending', earnings: 0}
+                    ];
+                    this.saveData('therapists');
+                }
+
+                if (this.data.services.length === 0) {
+                    this.data.services = [
+                        {id: 1, name: 'Masaje Relajante', therapist: 'Carlos Silva', price: 180, status: 'approved'},
+                        {id: 2, name: 'Acupuntura', therapist: 'Roberto Chen', price: 200, status: 'pending'}
+                    ];
+                    this.saveData('services');
+                }
+
+                if (this.data.bookings.length === 0) {
+                    this.data.bookings = [
+                        {id: 1, client: 'María García', therapist: 'Carlos Silva', service: 'Masaje Relajante', date: '2025-01-22', status: 'confirmed'},
+                        {id: 2, client: 'Ana López', therapist: 'Carlos Silva', service: 'Masaje Relajante', date: '2025-01-23', status: 'pending'}
+                    ];
+                    this.saveData('bookings');
+                }
+
+                if (this.data.payments.length === 0) {
+                    this.data.payments = [
+                        {id: 1, user: 'María García', concept: 'Masaje Relajante', amount: 180, method: 'Tarjeta', status: 'success', date: '2025-01-21'},
+                        {id: 2, user: 'Ana López', concept: 'Masaje Relajante', amount: 180, method: 'PayPal', status: 'pending', date: '2025-01-22'}
+                    ];
+                    this.saveData('payments');
+                }
+
+                if (this.data.audit.length === 0) {
+                    this.data.audit = [
+                        {id: 1, action: 'login', description: 'María García inició sesión', timestamp: '2025-01-22 09:30', ip: '192.168.1.100'},
+                        {id: 2, action: 'suspend', description: 'Ana López suspendida por admin', timestamp: '2025-01-21 15:45', ip: '10.0.0.1'},
+                        {id: 3, action: 'approve', description: 'Servicio Masaje Relajante aprobado', timestamp: '2025-01-20 11:20', ip: '10.0.0.1'}
+                    ];
+                    this.saveData('audit');
+                }
+            },
+
+            setupEvents() {
+                document.getElementById('userForm').onsubmit = (e) => {
+                    e.preventDefault();
+                    this.saveUser();
+                };
+
+                document.getElementById('globalSearch').oninput = (e) => {
+                    if (e.target.value.length > 2) {
+                        this.globalSearch(e.target.value);
+                    }
+                };
+
+                document.getElementById('selectAll').onchange = (e) => {
+                    document.querySelectorAll('.user-checkbox').forEach(cb => {
+                        cb.checked = e.target.checked;
+                    });
+                    this.updateBulkActions();
+                };
+            },
+
+            saveData(type) {
+                localStorage.setItem(`kusi_${type}`, JSON.stringify(this.data[type]));
+            },
+
+            loadDashboard() {
+                document.getElementById('totalUsers').textContent = this.data.users.length.toLocaleString();
+                document.getElementById('activeTherapists').textContent = this.data.therapists.filter(t => t.status === 'verified').length;
+                document.getElementById('monthlyBookings').textContent = this.data.bookings.length;
+                
+                const revenue = this.data.payments.filter(p => p.status === 'success').reduce((sum, p) => sum + p.amount, 0);
+                document.getElementById('monthlyRevenue').textContent = 'S/ ' + revenue.toLocaleString();
+
+                // Update badges
+                document.getElementById('usersBadge').textContent = this.data.users.length;
+                document.getElementById('therapistsBadge').textContent = this.data.therapists.filter(t => t.status === 'pending').length;
+                document.getElementById('servicesBadge').textContent = this.data.services.filter(s => s.status === 'pending').length;
+                document.getElementById('bookingsBadge').textContent = this.data.bookings.filter(b => b.status === 'pending').length;
+
+                this.loadActivity();
+            },
+
+            loadActivity() {
+                const tbody = document.getElementById('activityTable');
+                tbody.innerHTML = '';
+                this.data.audit.slice(0, 5).forEach(log => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${this.timeAgo(log.timestamp)}</td>
+                        <td>${this.extractUser(log.description)}</td>
+                        <td>${log.description}</td>
+                        <td><span class="status-badge status-${log.action === 'login' ? 'active' : 'pending'}">${log.action}</span></td>
+                    `;
+                });
+            },
+
+            loadUsers() {
+                const tbody = document.getElementById('usersTable');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                this.data.users.forEach(user => {
+                    const row = tbody.insertRow();
+                    const suspended = user.status === 'suspended';
+                    row.style.cssText = suspended ? 'background:rgba(245,158,11,.1)' : '';
+                    row.innerHTML = `
+                        <td><input type="checkbox" class="user-checkbox" value="${user.id}" onchange="adminSystem.updateBulkActions()"> #${user.id}</td>
+                        <td>
+                            <div><strong>${user.name}</strong></div>
+                            <div style="font-size:.8rem;color:var(--muted)">${user.phone}</div>
+                            ${suspended ? `<div style="font-size:.7rem;color:var(--error)">⚠️ ${user.suspensionReason || 'Suspendido'}</div>` : ''}
+                        </td>
+                        <td>${user.email}</td>
+                        <td><span class="status-badge status-${user.type === 'cliente' ? 'active' : 'verified'}">${user.type}</span></td>
+                        <td><span class="status-badge status-${user.status}">${user.status}</span></td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" onclick="adminSystem.editUser(${user.id})" title="Editar"><i class="fas fa-edit"></i></button>
+                            ${user.status === 'active' ? 
+                                `<button class="btn btn-warning btn-sm" onclick="adminSystem.suspendUser(${user.id})" title="Suspender"><i class="fas fa-pause"></i></button>` :
+                                `<button class="btn btn-success btn-sm" onclick="adminSystem.activateUser(${user.id})" title="Activar"><i class="fas fa-play"></i></button>`
+                            }
+                            <button class="btn btn-danger btn-sm" onclick="adminSystem.deleteUser(${user.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary btn-sm" onclick="toggleDropdown('user-${user.id}')" title="Más"><i class="fas fa-ellipsis-v"></i></button>
+                                <div id="user-${user.id}" class="dropdown-content">
+                                    <a onclick="adminSystem.viewUser(${user.id})"><i class="fas fa-eye"></i> Ver detalles</a>
+                                    <a onclick="adminSystem.sendNotification(${user.id})"><i class="fas fa-envelope"></i> Enviar mensaje</a>
+                                    <a onclick="adminSystem.resetPassword(${user.id})"><i class="fas fa-key"></i> Reset contraseña</a>
+                                </div>
+                            </div>
+                        </td>
+                    `;
+                });
+            },
+
+            loadTherapists() {
+                const tbody = document.getElementById('therapistsTable');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                this.data.therapists.forEach(therapist => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>#${therapist.id}</td>
+                        <td>
+                            <div><strong>${therapist.name}</strong></div>
+                            <div style="font-size:.8rem;color:var(--muted)">S/ ${therapist.earnings.toLocaleString()} ganados</div>
+                        </td>
+                        <td>${therapist.specialty}</td>
+                        <td>${'★'.repeat(Math.floor(therapist.rating))} ${therapist.rating}</td>
+                        <td><span class="status-badge status-${therapist.status}">${therapist.status}</span></td>
+                        <td>
+                            ${therapist.status === 'pending' ? 
+                                `<button class="btn btn-success btn-sm" onclick="adminSystem.approveTherapist(${therapist.id})"><i class="fas fa-check"></i></button>
+                                 <button class="btn btn-danger btn-sm" onclick="adminSystem.rejectTherapist(${therapist.id})"><i class="fas fa-times"></i></button>` :
+                                `<button class="btn btn-secondary btn-sm" onclick="adminSystem.viewTherapist(${therapist.id})"><i class="fas fa-eye"></i></button>`
+                            }
+                        </td>
+                    `;
+                });
+            },
+
+            loadServices() {
+                const tbody = document.getElementById('servicesTable');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                this.data.services.forEach(service => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>#${service.id}</td>
+                        <td><strong>${service.name}</strong></td>
+                        <td>${service.therapist}</td>
+                        <td>S/ ${service.price}</td>
+                        <td><span class="status-badge status-${service.status === 'approved' ? 'active' : 'pending'}">${service.status}</span></td>
+                        <td>
+                            ${service.status === 'pending' ? 
+                                `<button class="btn btn-success btn-sm" onclick="adminSystem.approveService(${service.id})"><i class="fas fa-check"></i></button>
+                                 <button class="btn btn-danger btn-sm" onclick="adminSystem.rejectService(${service.id})"><i class="fas fa-times"></i></button>` :
+                                `<button class="btn btn-warning btn-sm" onclick="adminSystem.suspendService(${service.id})"><i class="fas fa-pause"></i></button>`
+                            }
+                        </td>
+                    `;
+                });
+            },
+
+            loadBookings() {
+                const tbody = document.getElementById('bookingsTable');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                this.data.bookings.forEach(booking => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>#${booking.id}</td>
+                        <td>${booking.client}</td>
+                        <td>${booking.therapist}</td>
+                        <td>${booking.service}</td>
+                        <td>${booking.date}</td>
+                        <td><span class="status-badge status-${booking.status === 'confirmed' ? 'active' : 'pending'}">${booking.status}</span></td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" onclick="adminSystem.viewBooking(${booking.id})"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="adminSystem.cancelBooking(${booking.id})"><i class="fas fa-times"></i></button>
+                        </td>
+                    `;
+                });
+            },
+
+            loadPayments() {
+                const tbody = document.getElementById('paymentsTable');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                this.data.payments.forEach(payment => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>#${payment.id}</td>
+                        <td>${payment.user}</td>
+                        <td>${payment.concept}</td>
+                        <td style="color:${payment.amount >= 0 ? 'var(--success)' : 'var(--error)'}">S/ ${payment.amount}</td>
+                        <td>${payment.method}</td>
+                        <td><span class="status-badge status-${payment.status}">${payment.status}</span></td>
+                        <td>${payment.date}</td>
+                    `;
+                });
+            },
+
+            loadAudit() {
+                const container = document.getElementById('auditLog');
+                if (!container) return;
+                container.innerHTML = '';
+
+                this.data.audit.forEach(log => {
+                    const entry = document.createElement('div');
+                    entry.className = 'audit-entry';
+                    entry.innerHTML = `
+                        <div class="audit-timestamp">${log.timestamp}</div>
+                        <div class="audit-action">${log.action.toUpperCase()}</div>
+                        <div class="audit-description">${log.description}</div>
+                        <div style="font-size:.8rem;color:var(--muted);margin-top:.5rem">IP: ${log.ip}</div>
+                    `;
+                    container.appendChild(entry);
+                });
+            },
+
+            // User Management Actions
+            editUser(id) {
+                const user = this.data.users.find(u => u.id === id);
+                if (user) {
+                    document.getElementById('userModalTitle').textContent = 'Editar Usuario';
+                    document.getElementById('userName').value = user.name;
+                    document.getElementById('userEmail').value = user.email;
+                    document.getElementById('userPhone').value = user.phone;
+                    document.getElementById('userType').value = user.type;
+                    document.getElementById('userForm').dataset.userId = id;
+                    document.getElementById('userModal').style.display = 'block';
+                }
+            },
+
+            async saveUser() {
+                const form = document.getElementById('userForm');
+                const userId = form.dataset.userId;
+                
+                this.showLoading('user', true);
+                
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    const userData = {
+                        name: document.getElementById('userName').value,
+                        email: document.getElementById('userEmail').value,
+                        phone: document.getElementById('userPhone').value,
+                        type: document.getElementById('userType').value,
+                        date: new Date().toISOString().split('T')[0]
+                    };
+
+                    if (userId) {
+                        const index = this.data.users.findIndex(u => u.id === parseInt(userId));
+                        this.data.users[index] = {...this.data.users[index], ...userData};
+                        this.showToast('Usuario actualizado', 'success');
+                    } else {
+                        userData.id = this.data.users.length + 1;
+                        userData.status = 'active';
+                        this.data.users.push(userData);
+                        this.showToast('Usuario creado', 'success');
+                    }
+
+                    this.saveData('users');
+                    this.closeModal('userModal');
+                    if (this.currentView === 'users') this.loadUsers();
+                    this.loadDashboard();
+                    
+                } catch (error) {
+                    this.showToast('Error al guardar usuario', 'error');
+                } finally {
+                    this.showLoading('user', false);
+                }
+            },
+
+            suspendUser(id) {
+                if (confirm('¿Suspender este usuario?')) {
+                    const user = this.data.users.find(u => u.id === id);
+                    if (user) {
+                        user.status = 'suspended';
+                        user.suspensionReason = prompt('Motivo de suspensión:') || 'Suspensión administrativa';
+                        this.saveData('users');
+                        this.loadUsers();
+                        this.addAuditLog('suspend', `Usuario ${user.name} suspendido`);
+                        this.showToast(`${user.name} suspendido`, 'warning');
+                    }
+                }
+            },
+
+            activateUser(id) {
+                const user = this.data.users.find(u => u.id === id);
+                if (user) {
+                    user.status = 'active';
+                    delete user.suspensionReason;
+                    this.saveData('users');
+                    this.loadUsers();
+                    this.addAuditLog('activate', `Usuario ${user.name} reactivado`);
+                    this.showToast(`${user.name} reactivado`, 'success');
+                }
+            },
+
+            deleteUser(id) {
+                if (confirm('¿Eliminar este usuario permanentemente?')) {
+                    const user = this.data.users.find(u => u.id === id);
+                    if (user) {
+                        this.data.users = this.data.users.filter(u => u.id !== id);
+                        this.saveData('users');
+                        this.loadUsers();
+                        this.loadDashboard();
+                        this.addAuditLog('delete', `Usuario ${user.name} eliminado`);
+                        this.showToast(`${user.name} eliminado`, 'error');
+                    }
+                }
+            },
+
+            viewUser(id) {
+                const user = this.data.users.find(u => u.id === id);
+                if (user) {
+                    const bookings = this.data.bookings.filter(b => b.client === user.name).length;
+                    const spent = this.data.payments.filter(p => p.user === user.name && p.amount > 0).reduce((sum, p) => sum + p.amount, 0);
+                    
+                    alert(`Detalles de ${user.name}:\n\nEmail: ${user.email}\nTeléfono: ${user.phone}\nTipo: ${user.type}\nEstado: ${user.status}\nRegistro: ${user.date}\nReservas: ${bookings}\nGastado: S/ ${spent}`);
+                }
+            },
+
+            sendNotification(id) {
+                const user = this.data.users.find(u => u.id === id);
+                const message = prompt(`Enviar mensaje a ${user.name}:`);
+                if (message) {
+                    this.showToast(`Mensaje enviado a ${user.name}`, 'success');
+                    this.addAuditLog('notify', `Mensaje enviado a ${user.name}`);
+                }
+            },
+
+            resetPassword(id) {
+                const user = this.data.users.find(u => u.id === id);
+                if (confirm(`¿Resetear contraseña de ${user.name}?`)) {
+                    this.showToast(`Nueva contraseña enviada a ${user.email}`, 'success');
+                    this.addAuditLog('reset_password', `Contraseña reseteada para ${user.name}`);
+                }
+            },
+
+            // Therapist Actions
+            approveTherapist(id) {
+                const therapist = this.data.therapists.find(t => t.id === id);
+                if (therapist) {
+                    therapist.status = 'verified';
+                    this.saveData('therapists');
+                    this.loadTherapists();
+                    this.addAuditLog('approve_therapist', `Terapeuta ${therapist.name} aprobado`);
+                    this.showToast(`${therapist.name} verificado`, 'success');
+                }
+            },
+
+            rejectTherapist(id) {
+                if (confirm('¿Rechazar este terapeuta?')) {
+                    const therapist = this.data.therapists.find(t => t.id === id);
+                    if (therapist) {
+                        this.data.therapists = this.data.therapists.filter(t => t.id !== id);
+                        this.saveData('therapists');
+                        this.loadTherapists();
+                        this.addAuditLog('reject_therapist', `Terapeuta ${therapist.name} rechazado`);
+                        this.showToast(`${therapist.name} rechazado`, 'warning');
+                    }
+                }
+            },
+
+            // Service Actions
+            approveService(id) {
+                const service = this.data.services.find(s => s.id === id);
+                if (service) {
+                    service.status = 'approved';
+                    this.saveData('services');
+                    this.loadServices();
+                    this.addAuditLog('approve_service', `Servicio ${service.name} aprobado`);
+                    this.showToast(`${service.name} aprobado`, 'success');
+                }
+            },
+
+            rejectService(id) {
+                if (confirm('¿Rechazar este servicio?')) {
+                    const service = this.data.services.find(s => s.id === id);
+                    if (service) {
+                        this.data.services = this.data.services.filter(s => s.id !== id);
+                        this.saveData('services');
+                        this.loadServices();
+                        this.addAuditLog('reject_service', `Servicio ${service.name} rechazado`);
+                        this.showToast(`${service.name} rechazado`, 'warning');
+                    }
+                }
+            },
+
+            // Booking Actions
+            viewBooking(id) {
+                const booking = this.data.bookings.find(b => b.id === id);
+                if (booking) {
+                    alert(`Reserva #${booking.id}:\n\nCliente: ${booking.client}\nTerapeuta: ${booking.therapist}\nServicio: ${booking.service}\nFecha: ${booking.date}\nEstado: ${booking.status}`);
+                }
+            },
+
+            cancelBooking(id) {
+                if (confirm('¿Cancelar esta reserva?')) {
+                    const booking = this.data.bookings.find(b => b.id === id);
+                    if (booking) {
+                        booking.status = 'cancelled';
+                        this.saveData('bookings');
+                        this.loadBookings();
+                        this.addAuditLog('cancel_booking', `Reserva #${booking.id} cancelada`);
+                        this.showToast('Reserva cancelada', 'warning');
+                    }
+                }
+            },
+
+            // Bulk Actions
+            updateBulkActions() {
+                const selected = document.querySelectorAll('.user-checkbox:checked');
+                const bulkBtn = document.getElementById('bulkBtn');
+                
+                if (selected.length > 0) {
+                    bulkBtn.style.display = 'inline-flex';
+                    this.selectedUsers = Array.from(selected).map(cb => parseInt(cb.value));
+                } else {
+                    bulkBtn.style.display = 'none';
+                    this.selectedUsers = [];
+                }
+            },
+
+            bulkAction(action) {
+                const count = this.selectedUsers.length;
+                if (count === 0) return;
+
+                const actions = {
+                    activate: () => this.selectedUsers.forEach(id => this.activateUser(id)),
+                    suspend: () => {
+                        const reason = prompt('Motivo de suspensión masiva:') || 'Suspensión masiva';
+                        this.selectedUsers.forEach(id => {
+                            const user = this.data.users.find(u => u.id === id);
+                            if (user) {
+                                user.status = 'suspended';
+                                user.suspensionReason = reason;
+                            }
+                        });
+                        this.saveData('users');
+                        this.loadUsers();
+                    },
+                    delete: () => {
+                        if (confirm(`¿Eliminar ${count} usuarios?`)) {
+                            this.data.users = this.data.users.filter(u => !this.selectedUsers.includes(u.id));
+                            this.saveData('users');
+                            this.loadUsers();
+                            this.loadDashboard();
+                        }
+                    },
+                    notify: () => {
+                        const message = prompt('Mensaje a enviar:');
+                        if (message) {
+                            this.showToast(`Mensaje enviado a ${count} usuarios`, 'success');
+                        }
+                    }
+                };
+
+                if (actions[action]) {
+                    actions[action]();
+                    this.selectedUsers = [];
+                    document.getElementById('selectAll').checked = false;
+                    this.updateBulkActions();
+                    this.closeModal('bulkModal');
+                    this.showToast(`Acción ${action} aplicada a ${count} usuarios`, 'success');
+                }
+            },
+
+            // Utility Functions
+            globalSearch(query) {
+                const results = [];
+                const q = query.toLowerCase();
+
+                this.data.users.forEach(user => {
+                    if (user.name.toLowerCase().includes(q) || user.email.toLowerCase().includes(q)) {
+                        results.push({type: 'usuario', data: user});
+                    }
+                });
+
+                this.data.therapists.forEach(therapist => {
+                    if (therapist.name.toLowerCase().includes(q) || therapist.specialty.toLowerCase().includes(q)) {
+                        results.push({type: 'terapeuta', data: therapist});
+                    }
+                });
+
+                console.log('Búsqueda:', results);
+                this.showToast(`${results.length} resultados encontrados`, 'info');
+            },
+
+            timeAgo(timestamp) {
+                const diff = Date.now() - new Date(timestamp).getTime();
+                const minutes = Math.floor(diff / 60000);
+                if (minutes < 60) return `Hace ${minutes} min`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `Hace ${hours}h`;
+                return `Hace ${Math.floor(hours / 24)}d`;
+            },
+
+            extractUser(description) {
+                const match = description.match(/Usuario ([\w\s]+)/);
+                return match ? match[1] : 'Sistema';
+            },
+
+            addAuditLog(action, description) {
+                this.data.audit.unshift({
+                    id: this.data.audit.length + 1,
+                    action,
+                    description,
+                    timestamp: new Date().toISOString().replace('T', ' ').substr(0, 19),
+                    ip: '127.0.0.1'
+                });
+                this.saveData('audit');
+            },
+
+            showLoading(type, show) {
+                const loading = document.getElementById(`${type}Loading`);
+                const text = document.getElementById(`${type}SubmitText`);
+                if (loading && text) {
+                    loading.style.display = show ? 'inline-block' : 'none';
+                    text.style.display = show ? 'none' : 'inline';
+                }
+            },
+
+            showToast(message, type = 'info') {
+                document.querySelectorAll('.toast').forEach(t => t.remove());
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 100);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            },
+
+            closeModal(id) {
+                document.getElementById(id).style.display = 'none';
+            }
+        };
+
+        // Global Functions
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.getElementById('mainContent').classList.toggle('expanded');
+        }
+
+        function showSection(section) {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            
+            event.target.closest('.nav-link').classList.add('active');
+            document.getElementById(`${section}-section`).classList.add('active');
+            
+            const titles = {
+                dashboard: 'Dashboard General',
+                users: 'Gestión de Usuarios',
+                therapists: 'Gestión de Terapeutas',
+                services: 'Gestión de Servicios',
+                bookings: 'Gestión de Reservas',
+                payments: 'Gestión de Pagos',
+                reports: 'Reportes del Sistema',
+                audit: 'Auditoría y Seguridad',
+                settings: 'Configuración'
+            };
+
+            document.getElementById('pageTitle').textContent = titles[section];
+            adminSystem.currentView = section;
+
+            const loaders = {
+                users: () => adminSystem.loadUsers(),
+                therapists: () => adminSystem.loadTherapists(),
+                services: () => adminSystem.loadServices(),
+                bookings: () => adminSystem.loadBookings(),
+                payments: () => adminSystem.loadPayments(),
+                audit: () => adminSystem.loadAudit()
+            };
+
+            if (loaders[section]) loaders[section]();
+        }
+
+        function openUserModal() {
+            document.getElementById('userModalTitle').textContent = 'Nuevo Usuario';
+            document.getElementById('userForm').reset();
+            delete document.getElementById('userForm').dataset.userId;
+            document.getElementById('userModal').style.display = 'block';
+        }
+
+        function closeModal(id) {
+            adminSystem.closeModal(id);
+        }
+
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleAllSelection() {
+            adminSystem.updateBulkActions();
+        }
+
+        function showBulkActions() {
+            document.getElementById('selectedCount').textContent = adminSystem.selectedUsers.length;
+            document.getElementById('bulkModal').style.display = 'block';
+        }
+
+        function bulkAction(action) {
+            adminSystem.bulkAction(action);
+        }
+
+        // Quick Actions
+        function showPendingApprovals() {
+            adminSystem.showToast('Mostrando elementos pendientes de aprobación', 'info');
+        }
+
+        function runSystemCheck() {
+            adminSystem.showToast('Ejecutando diagnóstico del sistema...', 'info');
+            setTimeout(() => adminSystem.showToast('Sistema funcionando correctamente', 'success'), 2000);
+        }
+
+        function sendBulkNotification() {
+            const message = prompt('Mensaje para todos los usuarios:');
+            if (message) {
+                adminSystem.showToast('Notificación enviada a todos los usuarios', 'success');
+            }
+        }
+
+        function runMaintenance() {
+            if (confirm('¿Ejecutar tareas de mantenimiento?')) {
+                adminSystem.showToast('Ejecutando mantenimiento...', 'info');
+                setTimeout(() => adminSystem.showToast('Mantenimiento completado', 'success'), 3000);
+            }
+        }
+
+        function refreshActivity() {
+            adminSystem.loadActivity();
+            adminSystem.showToast('Actividad actualizada', 'success');
+        }
+
+        // Filter Functions
+        function applyUserFilters() {
+            const status = document.getElementById('userStatusFilter').value;
+            const type = document.getElementById('userTypeFilter').value;
+            
+            let filtered = adminSystem.data.users;
+            if (status) filtered = filtered.filter(u => u.status === status);
+            if (type) filtered = filtered.filter(u => u.type === type);
+            
+            adminSystem.showToast(`${filtered.length} usuarios encontrados`, 'info');
+        }
+
+        function filterTherapists(status) {
+            adminSystem.showToast(`Mostrando terapeutas ${status}`, 'info');
+        }
+
+        function filterServices(status) {
+            adminSystem.showToast(`Mostrando servicios ${status}`, 'info');
+        }
+
+        function filterBookings(period) {
+            adminSystem.showToast(`Mostrando reservas: ${period}`, 'info');
+        }
+
+        function refreshBookings() {
+            adminSystem.loadBookings();
+            adminSystem.showToast('Reservas actualizadas', 'success');
+        }
+
+        // Export Functions
+        function exportUsers() {
+            adminSystem.showToast('Exportando usuarios...', 'info');
+            setTimeout(() => adminSystem.showToast('Archivo usuarios.csv descargado', 'success'), 1500);
+        }
+
+        function exportPayments() {
+            adminSystem.showToast('Exportando pagos...', 'info');
+            setTimeout(() => adminSystem.showToast('Archivo pagos.xlsx descargado', 'success'), 1500);
+        }
+
+        function processPendingPayments() {
+            adminSystem.showToast('Procesando pagos pendientes...', 'warning');
+            setTimeout(() => adminSystem.showToast('Pagos procesados correctamente', 'success'), 2000);
+        }
+
+        // Report Functions
+        function generateReport() {
+            const type = document.getElementById('reportType').value;
+            const period = document.getElementById('reportPeriod').value;
+            const format = document.querySelector('input[name="format"]:checked').value;
+            
+            adminSystem.showLoading('report', true);
+            setTimeout(() => {
+                adminSystem.showLoading('report', false);
+                adminSystem.showToast(`Reporte ${type} generado en ${format}`, 'success');
+            }, 2000);
+        }
+
+        function quickReport(type) {
+            adminSystem.showToast(`Generando reporte ${type}...`, 'info');
+            setTimeout(() => adminSystem.showToast(`Reporte ${type} descargado`, 'success'), 1500);
+        }
+
+        // Audit Functions
+        function checkIntegrity() {
+            adminSystem.showToast('Verificando integridad de datos...', 'info');
+            setTimeout(() => adminSystem.showToast('Integridad verificada correctamente', 'success'), 2000);
+        }
+
+        function scanThreats() {
+            adminSystem.showToast('Escaneando amenazas de seguridad...', 'warning');
+            setTimeout(() => adminSystem.showToast('No se encontraron amenazas', 'success'), 3000);
+        }
+
+        function auditReport() {
+            adminSystem.showToast('Generando reporte de auditoría...', 'info');
+            setTimeout(() => adminSystem.showToast('Reporte de auditoría descargado', 'success'), 2000);
+        }
+
+        function emergencyCleanup() {
+            if (confirm('¿Ejecutar limpieza de emergencia?')) {
+                adminSystem.showToast('Ejecutando limpieza de emergencia...', 'error');
+                setTimeout(() => adminSystem.showToast('Limpieza completada', 'success'), 3000);
+            }
+        }
+
+        function filterAudit(type) {
+            adminSystem.showToast(`Filtrando logs: ${type}`, 'info');
+        }
+
+        function refreshAudit() {
+            adminSystem.loadAudit();
+            adminSystem.showToast('Log de auditoría actualizado', 'success');
+        }
+
+        // Settings Functions
+        function resetSettings() {
+            if (confirm('¿Restaurar configuración por defecto?')) {
+                adminSystem.showToast('Configuración restaurada', 'warning');
+            }
+        }
+
+        function saveSettings() {
+            adminSystem.showLoading('settings', true);
+            setTimeout(() => {
+                adminSystem.showLoading('settings', false);
+                adminSystem.showToast('Configuración guardada correctamente', 'success');
+            }, 1000);
+        }
+
+        // Initialize System
+        document.addEventListener('DOMContentLoaded', () => {
+            adminSystem.init();
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown-content').forEach(d => d.style.display = 'none');
+                }
+            });
+
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
+            });
+
+            // Mobile sidebar toggle
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.add('collapsed');
+                document.getElementById('mainContent').classList.add('expanded');
+            }
+        });
+    </script>
+</body>
+</html>
