@@ -18,21 +18,18 @@
             --error: #ef4444;
             --gold: #fbbf24;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, var(--dark), #243447);
             color: var(--text);
             min-height: 100vh;
         }
-
         .header {
             background: rgba(26, 35, 50, 0.95);
             padding: 1rem;
@@ -43,7 +40,6 @@
             backdrop-filter: blur(10px);
             border-bottom: 2px solid var(--error);
         }
-
         .nav {
             display: flex;
             justify-content: space-between;
@@ -53,7 +49,6 @@
             flex-wrap: wrap;
             gap: 0.5rem;
         }
-
         .logo {
             font-size: 1.4rem;
             font-weight: bold;
@@ -63,7 +58,6 @@
             gap: 0.5rem;
             text-decoration: none;
         }
-
         .btn {
             padding: 0.6rem 1.2rem;
             border: none;
@@ -77,27 +71,22 @@
             font-size: 0.9rem;
             text-decoration: none;
         }
-
         .btn-success {
             background: var(--success);
             color: white;
         }
-
         .btn-danger {
             background: var(--error);
             color: white;
         }
-
         .btn-secondary {
             background: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
         }
-
         .btn:active {
             transform: scale(0.95);
         }
-
         .main {
             margin-top: 80px;
             padding: 1.5rem 1rem;
@@ -105,7 +94,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-
         .card {
             background: rgba(45, 55, 72, 0.8);
             border-radius: 20px;
@@ -113,17 +101,14 @@
             border: 2px solid rgba(239, 68, 68, 0.3);
             margin-bottom: 1.5rem;
         }
-
         .form-group {
             margin-bottom: 1.5rem;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 0.7rem;
             font-weight: 600;
         }
-
         .form-group input {
             width: 100%;
             padding: 1rem;
@@ -133,27 +118,22 @@
             color: var(--text);
             font-size: 1rem;
         }
-
         .form-group input:focus {
             outline: none;
             border-color: var(--error);
         }
-
         .dashboard {
             display: none;
         }
-
         .dashboard.active {
             display: block;
         }
-
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
-
         .stat-card {
             background: rgba(45, 55, 72, 0.8);
             padding: 1.5rem;
@@ -161,21 +141,18 @@
             border: 2px solid rgba(239, 68, 68, 0.3);
             text-align: center;
         }
-
         .stat-value {
             font-size: 2rem;
             font-weight: bold;
             color: var(--error);
             margin-bottom: 0.5rem;
         }
-
         .tabs {
             display: flex;
             gap: 0.8rem;
             margin-bottom: 1.5rem;
             flex-wrap: wrap;
         }
-
         .tab {
             padding: 0.8rem 1.5rem;
             background: rgba(45, 55, 72, 0.6);
@@ -189,21 +166,17 @@
             gap: 0.5rem;
             font-size: 0.9rem;
         }
-
         .tab.active {
             background: var(--error);
             color: white;
             border-color: var(--error);
         }
-
         .tab-content {
             display: none;
         }
-
         .tab-content.active {
             display: block;
         }
-
         .item-card {
             background: rgba(45, 55, 72, 0.8);
             padding: 1.5rem;
@@ -211,7 +184,6 @@
             border: 2px solid rgba(239, 68, 68, 0.3);
             margin-bottom: 1.5rem;
         }
-
         .item-header {
             display: flex;
             justify-content: space-between;
@@ -220,25 +192,21 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
-
         .item-info h3 {
             color: var(--text);
             margin-bottom: 0.5rem;
             font-size: 1.2rem;
         }
-
         .item-meta {
             color: var(--muted);
             font-size: 0.9rem;
             line-height: 1.8;
         }
-
         .item-actions {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
-
         .payment-proof {
             max-width: 100%;
             max-height: 300px;
@@ -246,7 +214,6 @@
             margin-top: 1rem;
             cursor: pointer;
         }
-
         .badge {
             padding: 0.4rem 0.8rem;
             border-radius: 20px;
@@ -254,17 +221,14 @@
             font-weight: 600;
             display: inline-block;
         }
-
         .badge-pending {
             background: var(--warning);
             color: #000;
         }
-
         .badge-approved {
             background: var(--success);
             color: white;
         }
-
         .modal {
             display: none;
             position: fixed;
@@ -275,7 +239,9 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.95);
         }
-
+        .modal.show {
+            display: block;
+        }
         .modal-content {
             background: rgba(26, 35, 50, 0.98);
             margin: 2rem auto;
@@ -284,12 +250,10 @@
             max-width: 90%;
             border: 2px solid var(--error);
         }
-
         .modal-image {
             width: 100%;
             border-radius: 15px;
         }
-
         .close {
             color: var(--muted);
             float: right;
@@ -297,7 +261,6 @@
             font-weight: bold;
             cursor: pointer;
         }
-
         .toast {
             position: fixed;
             top: 90px;
@@ -314,15 +277,12 @@
             transform: translateY(-20px);
             transition: all 0.3s;
         }
-
         .toast.show {
             opacity: 1;
             transform: translateY(0);
         }
-
         .toast.success { background: var(--success); }
         .toast.error { background: var(--error); }
-
         .loader-overlay {
             display: none;
             position: fixed;
@@ -335,11 +295,9 @@
             justify-content: center;
             align-items: center;
         }
-
         .loader-overlay.show {
             display: flex;
         }
-
         .loader {
             width: 50px;
             height: 50px;
@@ -348,17 +306,14 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
             color: var(--muted);
         }
-
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 1rem;
@@ -469,9 +424,9 @@
         </section>
     </main>
 
-    <div id="imageModal" class="modal" onclick="closeModal('imageModal')">
+    <div id="imageModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close" onclick="closeModal('imageModal')">&times;</span>
             <img id="modalImage" class="modal-image" src="" alt="Comprobante">
         </div>
     </div>
@@ -839,11 +794,11 @@
 
         function openImage(url) {
             document.getElementById('modalImage').src = url;
-            document.getElementById('imageModal').style.display = 'block';
+            document.getElementById('imageModal').classList.add('show');
         }
 
         function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
+            document.getElementById(id).classList.remove('show');
         }
 
         function showLoader(show) {
@@ -854,8 +809,8 @@
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
-            setTimeout(() =>            document.body.appendChild(toast);
- toast.classList.add('show'), 100);
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 100);
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
