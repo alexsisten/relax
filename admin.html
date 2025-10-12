@@ -2,15 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KusiRelax - Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ef4444">
+    <title>KusiRelax - Panel Admin</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #81e6d9;
             --dark: #0a0f1c;
-            --card: #1a2332;
             --text: #e2e8f0;
             --muted: #a0aec0;
             --success: #22c55e;
@@ -23,10 +23,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, var(--dark), #243447);
             color: var(--text);
             min-height: 100vh;
@@ -41,7 +42,6 @@
             z-index: 1000;
             backdrop-filter: blur(10px);
             border-bottom: 2px solid var(--error);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
         .nav {
@@ -50,10 +50,12 @@
             align-items: center;
             max-width: 1600px;
             margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .logo {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: var(--error);
             display: flex;
@@ -63,7 +65,7 @@
         }
 
         .btn {
-            padding: 0.7rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border: none;
             border-radius: 25px;
             cursor: pointer;
@@ -72,7 +74,7 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             text-decoration: none;
         }
 
@@ -86,52 +88,30 @@
             color: white;
         }
 
-        .btn-warning {
-            background: var(--warning);
-            color: #000;
-        }
-
         .btn-secondary {
             background: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        .btn:active {
+            transform: scale(0.95);
         }
 
         .main {
             margin-top: 80px;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
             max-width: 1600px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .auth-section {
-            max-width: 500px;
-            margin: 4rem auto;
-        }
-
         .card {
             background: rgba(45, 55, 72, 0.8);
             border-radius: 20px;
-            padding: 2.5rem;
+            padding: 1.5rem;
             border: 2px solid rgba(239, 68, 68, 0.3);
-            backdrop-filter: blur(10px);
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .card h2 {
-            color: var(--error);
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group {
@@ -141,7 +121,6 @@
         .form-group label {
             display: block;
             margin-bottom: 0.7rem;
-            color: var(--text);
             font-weight: 600;
         }
 
@@ -153,13 +132,11 @@
             background: rgba(26, 35, 50, 0.9);
             color: var(--text);
             font-size: 1rem;
-            transition: all 0.3s;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: var(--error);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
         }
 
         .dashboard {
@@ -172,65 +149,50 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
             background: rgba(45, 55, 72, 0.8);
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 15px;
             border: 2px solid rgba(239, 68, 68, 0.3);
             text-align: center;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--error);
         }
 
         .stat-value {
-            font-size: 3rem;
+            font-size: 2rem;
             font-weight: bold;
             color: var(--error);
             margin-bottom: 0.5rem;
         }
 
-        .stat-label {
-            color: var(--muted);
-            font-size: 1rem;
-        }
-
         .tabs {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
             flex-wrap: wrap;
         }
 
         .tab {
-            padding: 1rem 2rem;
+            padding: 0.8rem 1.5rem;
             background: rgba(45, 55, 72, 0.6);
             border: 2px solid rgba(239, 68, 68, 0.3);
             border-radius: 15px;
             cursor: pointer;
-            transition: all 0.3s;
             font-weight: 600;
             color: var(--text);
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.9rem;
         }
 
         .tab.active {
             background: var(--error);
             color: white;
-            border-color: var(--error);
-        }
-
-        .tab:hover {
             border-color: var(--error);
         }
 
@@ -242,28 +204,19 @@
             display: block;
         }
 
-        .items-list {
-            display: grid;
-            gap: 1.5rem;
-        }
-
         .item-card {
             background: rgba(45, 55, 72, 0.8);
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 15px;
             border: 2px solid rgba(239, 68, 68, 0.3);
-            transition: all 0.3s;
-        }
-
-        .item-card:hover {
-            border-color: var(--error);
+            margin-bottom: 1.5rem;
         }
 
         .item-header {
             display: flex;
             justify-content: space-between;
             align-items: start;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             gap: 1rem;
             flex-wrap: wrap;
         }
@@ -271,40 +224,33 @@
         .item-info h3 {
             color: var(--text);
             margin-bottom: 0.5rem;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
         }
 
         .item-meta {
             color: var(--muted);
-            font-size: 0.95rem;
-            line-height: 2;
+            font-size: 0.9rem;
+            line-height: 1.8;
         }
 
         .item-actions {
             display: flex;
-            gap: 0.7rem;
+            gap: 0.5rem;
             flex-wrap: wrap;
         }
 
         .payment-proof {
             max-width: 100%;
-            max-height: 400px;
+            max-height: 300px;
             border-radius: 15px;
             margin-top: 1rem;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .payment-proof:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .badge {
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
             display: inline-block;
         }
@@ -319,11 +265,6 @@
             color: white;
         }
 
-        .badge-rejected {
-            background: var(--error);
-            color: white;
-        }
-
         .modal {
             display: none;
             position: fixed;
@@ -333,13 +274,12 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
         }
 
         .modal-content {
             background: rgba(26, 35, 50, 0.98);
-            margin: 2% auto;
-            padding: 2rem;
+            margin: 2rem auto;
+            padding: 1.5rem;
             border-radius: 25px;
             max-width: 90%;
             border: 2px solid var(--error);
@@ -356,32 +296,28 @@
             font-size: 2rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .close:hover {
-            color: var(--error);
-            transform: rotate(90deg);
         }
 
         .toast {
             position: fixed;
-            top: 100px;
+            top: 90px;
             right: 20px;
-            padding: 1rem 1.5rem;
+            left: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 1rem;
             border-radius: 15px;
             color: white;
             font-weight: 600;
             z-index: 3000;
             opacity: 0;
-            transform: translateX(100%);
+            transform: translateY(-20px);
             transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .toast.show {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateY(0);
         }
 
         .toast.success { background: var(--success); }
@@ -405,9 +341,9 @@
         }
 
         .loader {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(239, 68, 68, 0.3);
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(239, 68, 68, 0.3);
             border-top-color: var(--error);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -419,20 +355,14 @@
 
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 3rem 1rem;
             color: var(--muted);
         }
 
         .empty-state i {
-            font-size: 4rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
             opacity: 0.3;
-        }
-
-        @media (min-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
         }
     </style>
 </head>
@@ -447,34 +377,34 @@
                 <i class="fas fa-shield-alt"></i> KusiRelax ADMIN
             </a>
             
-            <div style="display: flex; gap: 0.8rem;">
+            <div style="display: flex; gap: 0.5rem;">
                 <a href="index.html" class="btn btn-secondary">
                     <i class="fas fa-home"></i> Inicio
                 </a>
                 <button class="btn btn-danger" onclick="logout()" id="logoutBtn" style="display: none;">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    <i class="fas fa-sign-out-alt"></i> Salir
                 </button>
             </div>
         </nav>
     </header>
 
     <main class="main">
-        <section class="auth-section" id="authSection">
-            <div class="card">
-                <h2><i class="fas fa-lock"></i> Acceso Administrativo</h2>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label><i class="fas fa-user-shield"></i> Email Administrador:</label>
-                        <input type="email" id="loginEmail" required placeholder="admin@kusirelax.com" value="admin@kusirelax.com">
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-key"></i> Contraseña:</label>
-                        <input type="password" id="loginPassword" required placeholder="••••••••" value="alex233">
-                    </div>
-                    <button type="submit" class="btn btn-danger" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1rem;">
-                        <i class="fas fa-sign-in-alt"></i> Acceder al Panel
-                    </button>
-                </form>
+        <section id="authSection">
+            <div class="card" style="max-width: 500px; margin: 4rem auto;">
+                <h2 style="color: var(--error); margin-bottom: 2rem; text-align: center;">
+                    <i class="fas fa-lock"></i> Acceso Administrativo
+                </h2>
+                <div class="form-group">
+                    <label><i class="fas fa-user-shield"></i> Email Admin:</label>
+                    <input type="email" id="loginEmail" value="admin@kusirelax.com" placeholder="admin@kusirelax.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-key"></i> Contraseña:</label>
+                    <input type="password" id="loginPassword" value="alex233" placeholder="••••••••">
+                </div>
+                <button class="btn btn-danger" onclick="login()" style="width: 100%; justify-content: center; padding: 1rem;">
+                    <i class="fas fa-sign-in-alt"></i> Acceder
+                </button>
             </div>
         </section>
 
@@ -482,19 +412,19 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value" id="statPayments">0</div>
-                    <div class="stat-label">Pagos Pendientes</div>
+                    <div style="color: var(--muted); font-size: 0.9rem;">Pagos Pendientes</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="statServices">0</div>
-                    <div class="stat-label">Servicios Pendientes</div>
+                    <div style="color: var(--muted); font-size: 0.9rem;">Servicios Pendientes</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="statTherapists">0</div>
-                    <div class="stat-label">Terapeutas PRO</div>
+                    <div style="color: var(--muted); font-size: 0.9rem;">Terapeutas PRO</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">S/ <span id="statRevenue">0</span></div>
-                    <div class="stat-label">Ingresos Totales</div>
+                    <div style="color: var(--muted); font-size: 0.9rem;">Ingresos</div>
                 </div>
             </div>
 
@@ -512,22 +442,28 @@
 
             <div id="paymentsTab" class="tab-content active">
                 <div class="card">
-                    <h2><i class="fas fa-dollar-sign"></i> Verificar Pagos YAPE</h2>
-                    <div class="items-list" id="paymentsList"></div>
+                    <h2 style="color: var(--error); margin-bottom: 1.5rem; font-size: 1.3rem;">
+                        <i class="fas fa-dollar-sign"></i> Verificar Pagos YAPE
+                    </h2>
+                    <div id="paymentsList"></div>
                 </div>
             </div>
 
             <div id="servicesTab" class="tab-content">
                 <div class="card">
-                    <h2><i class="fas fa-check-circle"></i> Aprobar Servicios</h2>
-                    <div class="items-list" id="servicesList"></div>
+                    <h2 style="color: var(--error); margin-bottom: 1.5rem; font-size: 1.3rem;">
+                        <i class="fas fa-check-circle"></i> Aprobar Servicios
+                    </h2>
+                    <div id="servicesList"></div>
                 </div>
             </div>
 
             <div id="therapistsTab" class="tab-content">
                 <div class="card">
-                    <h2><i class="fas fa-user-md"></i> Gestionar Terapeutas</h2>
-                    <div class="items-list" id="therapistsList"></div>
+                    <h2 style="color: var(--error); margin-bottom: 1.5rem; font-size: 1.3rem;">
+                        <i class="fas fa-user-md"></i> Gestionar Terapeutas
+                    </h2>
+                    <div id="therapistsList"></div>
                 </div>
             </div>
         </section>
@@ -547,7 +483,6 @@
 
         const ADMIN_EMAIL = 'admin@kusirelax.com';
         const ADMIN_PASSWORD = 'alex233';
-
         let isAdmin = false;
 
         async function init() {
@@ -557,11 +492,6 @@
                 showDashboard();
                 await loadData();
             }
-
-            document.getElementById('loginForm').onsubmit = (e) => {
-                e.preventDefault();
-                login();
-            };
         }
 
         function login() {
@@ -580,7 +510,7 @@
         }
 
         function logout() {
-            if (confirm('¿Cerrar sesión de administrador?')) {
+            if (confirm('¿Cerrar sesión?')) {
                 localStorage.removeItem('kusirelax_admin');
                 isAdmin = false;
                 location.reload();
@@ -640,15 +570,15 @@
 
                 if (error) throw error;
 
-                const pending = data.filter(p => p.status === 'pending').length;
+                const pending = data?.filter(p => p.status === 'pending').length || 0;
                 document.getElementById('statPayments').textContent = pending;
                 document.getElementById('paymentsCount').textContent = pending;
 
                 const list = document.getElementById('paymentsList');
-                const pendingPayments = data.filter(p => p.status === 'pending');
+                const pendingPayments = data?.filter(p => p.status === 'pending') || [];
 
                 if (pendingPayments.length === 0) {
-                    list.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle"></i><h3>No hay pagos pendientes</h3><p>Todos los pagos están verificados</p></div>';
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle"></i><h3>No hay pagos pendientes</h3></div>';
                     return;
                 }
 
@@ -678,7 +608,7 @@
                             </div>
                             ${payment.payment_proof_url ? `
                                 <img src="${payment.payment_proof_url}" class="payment-proof" onclick="openImage('${payment.payment_proof_url}')" alt="Comprobante">
-                            ` : '<p style="color: var(--muted); text-align: center;">Sin comprobante</p>'}
+                            ` : '<p style="color: var(--muted); text-align: center; margin-top: 1rem;">Sin comprobante</p>'}
                         </div>
                     `;
                 }).join('');
@@ -749,27 +679,29 @@
                         *,
                         therapist:therapists(
                             user:users(name, email, phone)
-                        )
+                        ),
+                        service_images(count)
                     `)
                     .is('deleted_at', null)
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
-                const pending = data.filter(s => s.status === 'pending').length;
+                const pending = data?.filter(s => s.status === 'pending').length || 0;
                 document.getElementById('statServices').textContent = pending;
                 document.getElementById('servicesCount').textContent = pending;
 
                 const list = document.getElementById('servicesList');
-                const pendingServices = data.filter(s => s.status === 'pending');
+                const pendingServices = data?.filter(s => s.status === 'pending') || [];
 
                 if (pendingServices.length === 0) {
-                    list.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle"></i><h3>No hay servicios pendientes</h3><p>Todos los servicios están revisados</p></div>';
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle"></i><h3>No hay servicios pendientes</h3></div>';
                     return;
                 }
 
                 list.innerHTML = pendingServices.map(service => {
                     const date = new Date(service.created_at).toLocaleString('es-PE');
+                    const imageCount = service.service_images[0]?.count || 0;
                     return `
                         <div class="item-card">
                             <div class="item-header">
@@ -781,9 +713,10 @@
                                         <div><i class="fas fa-th-large"></i> Categoría: <strong>${service.category}</strong></div>
                                         <div><i class="fas fa-map-marker-alt"></i> ${service.location}</div>
                                         <div><i class="fas fa-money-bill-wave"></i> Precio: <strong>S/ ${service.price}</strong></div>
+                                        <div><i class="fas fa-camera"></i> Fotos: <strong>${imageCount}</strong></div>
                                         <div><i class="fas fa-clock"></i> ${date}</div>
                                     </div>
-                                    <p style="color: var(--muted); margin-top: 1rem; line-height: 1.6;">${service.description}</p>
+                                    <p style="color: var(--muted); margin-top: 1rem; line-height: 1.6; font-size: 0.95rem;">${service.description}</p>
                                 </div>
                                 <div class="item-actions">
                                     <button class="btn btn-success" onclick="approveService('${service.id}')">
@@ -854,11 +787,11 @@
 
                 if (error) throw error;
 
-                document.getElementById('therapistsCount').textContent = data.length;
+                document.getElementById('therapistsCount').textContent = data?.length || 0;
 
                 const list = document.getElementById('therapistsList');
 
-                if (data.length === 0) {
+                if (!data || data.length === 0) {
                     list.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><h3>No hay terapeutas registrados</h3></div>';
                     return;
                 }
@@ -866,6 +799,7 @@
                 list.innerHTML = data.map(therapist => {
                     const isPro = therapist.subscription_plan === 'pro';
                     const date = new Date(therapist.created_at).toLocaleString('es-PE');
+                    const serviceCount = therapist.services[0]?.count || 0;
                     return `
                         <div class="item-card">
                             <div class="item-header">
@@ -876,13 +810,13 @@
                                         <div><i class="fab fa-whatsapp"></i> ${therapist.user.phone}</div>
                                         <div><i class="fas fa-calendar"></i> Registrado: ${date}</div>
                                         <div><i class="fas fa-crown"></i> Plan: <strong>${isPro ? 'PRO ⭐' : 'Prueba Gratis'}</strong></div>
-                                        <div><i class="fas fa-clipboard-list"></i> Servicios: <strong>${therapist.services.length}</strong></div>
+                                        <div><i class="fas fa-clipboard-list"></i> Servicios: <strong>${serviceCount}</strong></div>
                                     </div>
                                 </div>
                                 <div>
                                     ${isPro ? 
                                         '<span class="badge badge-approved">👑 PRO ACTIVO</span>' : 
-                                        '<span class="badge badge-warning">🎁 PRUEBA</span>'
+                                        '<span class="badge badge-pending">🎁 PRUEBA</span>'
                                     }
                                 </div>
                             </div>
@@ -920,8 +854,8 @@
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() =>            document.body.appendChild(toast);
+ toast.classList.add('show'), 100);
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
