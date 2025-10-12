@@ -2,33 +2,35 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KusiRelax - Encuentra tu Terapeuta Ideal en Cusco</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#81e6d9">
+    <title>KusiRelax - Panel Terapeutas</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #81e6d9;
             --dark: #0a0f1c;
-            --card: #1a2332;
             --text: #e2e8f0;
             --muted: #a0aec0;
             --success: #22c55e;
+            --warning: #f59e0b;
             --error: #ef4444;
+            --gold: #fbbf24;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, var(--dark), #243447);
             color: var(--text);
             min-height: 100vh;
-            transition: all 0.3s;
         }
 
         .header {
@@ -40,7 +42,6 @@
             z-index: 1000;
             backdrop-filter: blur(10px);
             border-bottom: 2px solid var(--primary);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
         .nav {
@@ -49,31 +50,22 @@
             align-items: center;
             max-width: 1400px;
             margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .logo {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: var(--primary);
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 0.8rem;
-            align-items: center;
+            text-decoration: none;
         }
 
         .btn {
-            padding: 0.7rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border: none;
             border-radius: 25px;
             cursor: pointer;
@@ -83,7 +75,7 @@
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .btn-primary {
@@ -91,327 +83,241 @@
             color: #000;
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-
         .btn-gold {
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            background: linear-gradient(90deg, var(--gold), #f59e0b);
             color: #000;
+            animation: shimmer 3s infinite;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(129, 230, 217, 0.4);
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
         }
 
         .main {
             margin-top: 80px;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
             max-width: 1400px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .hero {
-            text-align: center;
-            padding: 4rem 0 3rem;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--primary), #bee3f8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            line-height: 1.2;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            color: var(--muted);
-        }
-
-        .filters {
+        .card {
             background: rgba(45, 55, 72, 0.8);
-            padding: 2rem;
             border-radius: 20px;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(129, 230, 217, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .filters h3 {
+            padding: 1.5rem;
+            border: 2px solid rgba(129, 230, 217, 0.3);
             margin-bottom: 1.5rem;
-            color: var(--primary);
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .filters-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .search-container {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 1.2rem 1rem 1.2rem 3.5rem;
-            border: 2px solid rgba(129, 230, 217, 0.3);
-            border-radius: 25px;
-            background: rgba(26, 35, 50, 0.8);
-            color: var(--text);
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(129, 230, 217, 0.3);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1.2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 1.3rem;
-        }
-
-        .filter-select {
-            padding: 1rem;
-            border: 2px solid rgba(129, 230, 217, 0.3);
-            border-radius: 15px;
-            background: rgba(26, 35, 50, 0.8);
-            color: var(--text);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        .service-card {
-            background: rgba(45, 55, 72, 0.8);
+        .subscription-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(129, 230, 217, 0.2));
+            border: 3px solid var(--gold);
             border-radius: 20px;
-            overflow: hidden;
+            padding: 2rem 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: rgba(45, 55, 72, 0.8);
+            padding: 1.5rem;
+            border-radius: 15px;
             border: 2px solid rgba(129, 230, 217, 0.3);
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
         }
 
-        .service-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(129, 230, 217, 0.3);
-            border-color: var(--primary);
-        }
-
-        .service-images {
-            position: relative;
-            height: 300px;
-            overflow: hidden;
-        }
-
-        .service-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .service-image.active {
-            display: block;
-        }
-
-        .image-nav {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .image-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .image-dot.active {
-            background: white;
-            width: 30px;
-            border-radius: 5px;
-        }
-
-        .pro-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
-            padding: 0.6rem 1.2rem;
-            border-radius: 25px;
+        .stat-value {
+            font-size: 2rem;
             font-weight: bold;
-            color: #000;
-            font-size: 0.95rem;
-            box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .service-content {
-            padding: 2rem;
-        }
-
-        .service-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-
-        .service-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--text);
+            color: var(--primary);
             margin-bottom: 0.5rem;
         }
 
-        .therapist-name {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            overflow-y: auto;
+            padding: 1rem;
         }
 
-        .therapist-avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary), #bee3f8);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #000;
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 35, 50, 0.98), rgba(45, 55, 72, 0.98));
+            margin: 1rem auto;
+            padding: 1.5rem;
+            border-radius: 25px;
+            max-width: 600px;
+            border: 2px solid var(--primary);
+        }
+
+        .close {
+            color: var(--muted);
+            float: right;
+            font-size: 2rem;
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(129, 230, 217, 0.3);
+            cursor: pointer;
+            line-height: 1;
         }
 
-        .service-location {
-            color: var(--muted);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .service-description {
-            color: var(--muted);
-            line-height: 1.8;
+        .form-group {
             margin-bottom: 1.5rem;
         }
 
-        .service-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1.5rem;
-            border-top: 2px solid rgba(129, 230, 217, 0.2);
+        .form-group label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
         }
 
-        .service-price {
-            font-size: 2.2rem;
-            font-weight: bold;
-            color: var(--primary);
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(129, 230, 217, 0.3);
+            border-radius: 12px;
+            background: rgba(26, 35, 50, 0.9);
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
         }
 
-        .whatsapp-btn {
-            padding: 1rem 2rem;
-            background: #25D366;
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--primary);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            background: rgba(129, 230, 217, 0.05);
+        }
+
+        .images-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .remove-img {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--error);
             color: white;
             border: none;
-            border-radius: 30px;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
             cursor: pointer;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 1rem;
+            font-size: 0.8rem;
         }
 
-        .whatsapp-btn:hover {
-            background: #20BA5A;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5);
+        .yape-info {
+            background: linear-gradient(135deg, #722F91, #9c27b0);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: white;
+        }
+
+        .yape-number {
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 0.6rem;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .yape-amount {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--gold);
+            margin: 1rem 0;
         }
 
         .toast {
             position: fixed;
-            top: 100px;
+            top: 90px;
             right: 20px;
-            padding: 1rem 1.5rem;
+            left: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 1rem;
             border-radius: 15px;
             color: white;
             font-weight: 600;
             z-index: 3000;
             opacity: 0;
-            transform: translateX(100%);
+            transform: translateY(-20px);
             transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .toast.show {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateY(0);
         }
 
-        .toast.success {
-            background: var(--success);
-        }
-
-        .toast.error {
-            background: var(--error);
-        }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--error); }
+        .toast.warning { background: var(--warning); color: #000; }
 
         .loader-overlay {
             display: none;
@@ -431,9 +337,9 @@
         }
 
         .loader {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(129, 230, 217, 0.3);
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(129, 230, 217, 0.3);
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -443,37 +349,20 @@
             to { transform: rotate(360deg); }
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 5rem 2rem;
-            color: var(--muted);
+        .dashboard {
+            display: none;
         }
 
-        .empty-state i {
-            font-size: 5rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.3;
+        .dashboard.active {
+            display: block;
         }
 
-        .empty-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-        }
-
-        @media (min-width: 768px) {
-            .services-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .filters-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .services-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        .service-item {
+            background: rgba(26, 35, 50, 0.5);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid rgba(129, 230, 217, 0.2);
+            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -484,297 +373,575 @@
 
     <header class="header">
         <nav class="nav">
-            <div class="logo" onclick="location.reload()">
-                <i class="fas fa-spa"></i> KusiRelax
-            </div>
+            <a href="index.html" class="logo">
+                <i class="fas fa-spa"></i> KusiRelax PRO
+            </a>
             
-            <div class="nav-buttons">
-                <a href="tera.html" class="btn btn-gold">
-                    <i class="fas fa-user-md"></i> Soy Terapeuta
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <a href="index.html" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Inicio
                 </a>
-                <a href="admin.html" class="btn btn-secondary">
-                    <i class="fas fa-shield-alt"></i> Admin
-                </a>
+                <button class="btn btn-danger" onclick="logout()" id="logoutBtn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
             </div>
         </nav>
     </header>
 
     <main class="main">
-        <section class="hero">
-            <h1>🌸 Tu Bienestar es Nuestra Misión</h1>
-            <p>Conecta con los mejores terapeutas de Cusco</p>
-        </section>
-
-        <div class="filters">
-            <h3><i class="fas fa-filter"></i> Buscar Servicios</h3>
-            
-            <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-input" placeholder="Buscar servicios, terapeutas..." id="searchInput">
+        <section id="authSection">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;">🌟 Panel de Terapeutas</h1>
+                <p style="color: var(--muted); font-size: 1.1rem;">Gestiona tus servicios</p>
             </div>
 
-            <div class="filters-grid">
-                <select class="filter-select" id="categoryFilter">
-                    <option value="">Todas las categorías</option>
+            <div class="card" style="max-width: 550px; margin: 0 auto;">
+                <h2 style="color: var(--primary); margin-bottom: 2rem; text-align: center;">
+                    <i class="fas fa-user-circle"></i> Acceso de Terapeutas
+                </h2>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email:</label>
+                    <input type="email" id="loginEmail" placeholder="tu@email.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Contraseña:</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem;" onclick="login()">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </button>
+            </div>
+        </section>
+
+        <section class="dashboard" id="dashboardSection">
+            <div id="subscriptionBanner"></div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statServices">0</div>
+                    <div style="color: var(--muted); font-size: 0.9rem;">Servicios Activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statToday">0/4</div>
+                    <div style="color: var(--muted); font-size: 0.9rem;">Public. Hoy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">127</div>
+                    <div style="color: var(--muted); font-size: 0.9rem;">Vistas</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <h2 style="margin: 0; color: var(--primary); font-size: 1.3rem;"><i class="fas fa-list"></i> Mis Servicios</h2>
+                    <button class="btn btn-primary" onclick="openAddService()">
+                        <i class="fas fa-plus"></i> Nuevo
+                    </button>
+                </div>
+                <div id="servicesList"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL NUEVO SERVICIO -->
+    <div id="addServiceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addServiceModal')">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 1.5rem; font-size: 1.5rem;">
+                <i class="fas fa-plus-circle"></i> Crear Servicio
+            </h2>
+
+            <div class="form-group">
+                <label><i class="fas fa-camera"></i> Fotos (Mín 2, Máx 5) *</label>
+                <div class="upload-area" onclick="document.getElementById('serviceImages').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                    <p style="margin: 0.5rem 0; font-size: 1rem;">Click para subir fotos</p>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--muted);">Mínimo 2 fotos</p>
+                </div>
+                <input type="file" id="serviceImages" accept="image/*" multiple style="display: none;">
+                <div id="imagesPreview" class="images-preview"></div>
+                <p id="imageCount" style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);">0/5 fotos</p>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-tag"></i> Nombre *</label>
+                <input type="text" id="serviceName" placeholder="Ej: Masaje Relajante 60min">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-th-large"></i> Categoría *</label>
+                <select id="serviceCategory">
+                    <option value="">Seleccionar...</option>
                     <option value="masaje">💆 Masajes</option>
-                    <option value="spa">🧖 Spa & Relajación</option>
+                    <option value="spa">🧖 Spa</option>
                     <option value="yoga">🧘 Yoga</option>
-                    <option value="meditacion">🕉️ Meditación</option>
                     <option value="reiki">✨ Reiki</option>
                     <option value="terapia">🌿 Terapias</option>
                 </select>
-                
-                <select class="filter-select" id="locationFilter">
-                    <option value="">Todas las ubicaciones</option>
-                    <option value="cusco centro">Cusco Centro</option>
-                    <option value="san blas">San Blas</option>
-                    <option value="wanchaq">Wanchaq</option>
-                    <option value="santiago">Santiago</option>
-                    <option value="san sebastian">San Sebastián</option>
-                </select>
-
-                <button class="btn btn-primary" onclick="applyFilters()" style="width: 100%;">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
             </div>
-        </div>
 
-        <div class="services-grid" id="servicesGrid"></div>
-    </main>
+            <div class="form-group">
+                <label><i class="fas fa-align-left"></i> Descripción *</label>
+                <textarea id="serviceDescription" rows="3" placeholder="Describe tu servicio..."></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label><i class="fas fa-money-bill-wave"></i> Precio (S/) *</label>
+                    <input type="number" id="servicePrice" step="0.01" placeholder="50.00">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Ubicación *</label>
+                    <input type="text" id="serviceLocation" placeholder="Cusco Centro">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="createServiceBtn" style="width: 100%; justify-content: center; padding: 1rem;" onclick="createService()">
+                <i class="fas fa-check-circle"></i> Crear Servicio
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL PAGO YAPE -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('paymentModal')">&times;</span>
+            <h2 style="color: var(--gold); margin-bottom: 1.5rem; text-align: center; font-size: 1.8rem;">
+                <i class="fas fa-crown"></i> Activar Plan PRO
+            </h2>
+
+            <div class="yape-info">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;"><i class="fas fa-mobile-alt"></i> Yapea a:</h3>
+                <div class="yape-number">
+                    910 680 644
+                    <button class="copy-btn" onclick="copyYapeNumber()" title="Copiar">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="yape-amount">S/ 30.00</div>
+                <p style="font-size: 0.95rem; margin: 0;">✨ 48 horas ✨</p>
+            </div>
+
+            <div class="form-group">
+                <label style="color: var(--primary); font-size: 1.1rem;">
+                    <i class="fas fa-camera"></i> Sube tu comprobante:
+                </label>
+                <div class="upload-area" onclick="document.getElementById('paymentProof').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                    <p style="margin: 0.5rem 0;">Click para subir</p>
+                </div>
+                <input type="file" id="paymentProof" accept="image/*,application/pdf" style="display: none;">
+                <div id="paymentPreview" style="margin-top: 1rem; text-align: center;"></div>
+            </div>
+
+            <div style="background: rgba(129, 230, 217, 0.1); padding: 1.5rem; border-radius: 15px; margin: 1.5rem 0; border: 2px solid var(--primary);">
+                <h4 style="color: var(--primary); margin-bottom: 0.8rem; font-size: 1.1rem;">⭐ Beneficios PRO</h4>
+                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.95rem;">
+                    <li style="line-height: 2;">✨ Apareces primero</li>
+                    <li style="line-height: 2;">👑 Badge dorado</li>
+                    <li style="line-height: 2;">📊 Estadísticas</li>
+                    <li style="line-height: 2;">🎯 3x más visibilidad</li>
+                </ul>
+            </div>
+
+            <button class="btn btn-gold" id="submitPaymentBtn" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem;" onclick="submitPayment()">
+                <i class="fas fa-paper-plane"></i> Enviar Comprobante
+            </button>
+        </div>
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://dxpoxnebekmwrarjnqkv.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4cG94bmViZWttd3JhcmpucWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2NzgyNTUsImV4cCI6MjA3NTI1NDI1NX0.W51sb2JrEQ-i-fkKWdHVnC0HuDP4X_968SbE0vQagUE';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let allServices = [];
-        const demoServices = [
-            {
-                id: 1,
-                name: 'Masaje Relajante Completo',
-                category: 'masaje',
-                description: 'Masaje de cuerpo completo con técnicas de relajación profunda. Incluye aromaterapia y música ambiental. Duración: 90 minutos.',
-                price: '120.00',
-                location: 'Cusco Centro, Av. El Sol 456',
-                therapistName: 'María González',
-                therapistPhone: '910680644',
-                isPro: true,
-                images: [
-                    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&h=500&fit=crop'
-                ]
-            },
-            {
-                id: 2,
-                name: 'Yoga Restaurativo',
-                category: 'yoga',
-                description: 'Sesión de yoga suave enfocada en la restauración y balance del cuerpo. Ideal para principiantes.',
-                price: '50.00',
-                location: 'San Blas, Calle Tandapata 123',
-                therapistName: 'Carlos Quispe',
-                therapistPhone: '910680644',
-                isPro: false,
-                images: [
-                    'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=500&fit=crop'
-                ]
-            },
-            {
-                id: 3,
-                name: 'Spa Facial con Piedras Calientes',
-                category: 'spa',
-                description: 'Tratamiento facial completo con piedras volcánicas calientes, limpieza profunda, exfoliación y mascarilla nutritiva.',
-                price: '95.00',
-                location: 'Wanchaq, Av. De la Cultura 789',
-                therapistName: 'Ana Flores',
-                therapistPhone: '910680644',
-                isPro: true,
-                images: [
-                    'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1552693673-1bf958298935?w=800&h=500&fit=crop'
-                ]
-            },
-            {
-                id: 4,
-                name: 'Reiki Nivel I',
-                category: 'reiki',
-                description: 'Sesión de sanación energética mediante Reiki. Equilibra los chakras y promueve la paz interior. 60 minutos.',
-                price: '70.00',
-                location: 'San Sebastián, Urb. Los Incas',
-                therapistName: 'Pedro Mamani',
-                therapistPhone: '910680644',
-                isPro: false,
-                images: [
-                    'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=500&fit=crop'
-                ]
-            },
-            {
-                id: 5,
-                name: 'Masaje Deportivo Pre-Competencia',
-                category: 'masaje',
-                description: 'Masaje especializado para deportistas. Prepara los músculos para el rendimiento óptimo. 45 minutos de masaje intenso.',
-                price: '85.00',
-                location: 'Cusco Centro, Av. Ejercito 234',
-                therapistName: 'Laura Vargas',
-                therapistPhone: '910680644',
-                isPro: true,
-                images: [
-                    'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1552693673-1bf958298935?w=800&h=500&fit=crop'
-                ]
-            }
-        ];
+        let currentUser = null;
+        let therapistData = null;
+        let uploadedImages = [];
+        let paymentProofFile = null;
+        let todayServicesCount = 0;
 
-        async function init() {
+        async function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showToast('Completa todos los campos', 'error');
+                return;
+            }
+
             showLoader(true);
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+
+                const { data: userData } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (userData.user_type !== 'terapeuta') {
+                    throw new Error('Esta cuenta no es de terapeuta');
+                }
+
+                currentUser = userData;
+                await loadTherapistData();
+                updateUI();
+                showToast('¡Bienvenido! 🌟', 'success');
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function loadTherapistData() {
+            const { data } = await supabase
+                .from('therapists')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .single();
+
+            therapistData = data;
             await loadServices();
-            showLoader(false);
-            showToast('¡Bienvenido a KusiRelax! 🌸', 'success');
+            await loadTodayCount();
+            updateSubscriptionBanner();
+        }
+
+        async function loadTodayCount() {
+            const today = new Date().toISOString().split('T')[0];
+            const { data } = await supabase
+                .from('services')
+                .select('id')
+                .eq('therapist_id', therapistData.id)
+                .gte('created_at', today + 'T00:00:00');
+
+            todayServicesCount = data?.length || 0;
+            document.getElementById('statToday').textContent = `${todayServicesCount}/4`;
+        }
+
+        function updateUI() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('dashboardSection').classList.add('active');
+            document.getElementById('logoutBtn').style.display = 'flex';
+        }
+
+        function updateSubscriptionBanner() {
+            const banner = document.getElementById('subscriptionBanner');
+            const isPro = therapistData.subscription_plan === 'pro' && therapistData.subscription_status === 'active';
             
-            document.getElementById('searchInput').oninput = (e) => {
-                searchServices(e.target.value);
-            };
+            if (isPro) {
+                banner.innerHTML = `
+                    <div class="subscription-banner">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">
+                            <i class="fas fa-crown"></i> Plan PRO Activo
+                        </h3>
+                        <p style="font-size: 1.1rem; margin: 0.5rem 0;">
+                            ¡Destacado! Apareces primero 🎯
+                        </p>
+                        <button class="btn btn-gold" onclick="openModal('paymentModal')" style="margin-top: 1rem; padding: 0.8rem 1.5rem;">
+                            <i class="fas fa-sync-alt"></i> Renovar PRO
+                        </button>
+                    </div>
+                `;
+            } else {
+                const trialEnd = new Date(therapistData.trial_end_date);
+                const now = new Date();
+                const daysLeft = Math.max(0, Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24)));
+
+                banner.innerHTML = `
+                    <div class="subscription-banner">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">
+                            <i class="fas fa-gift"></i> Prueba Gratis
+                        </h3>
+                        <p style="font-size: 1.2rem; margin: 0.8rem 0;">
+                            Te quedan <strong style="color: var(--warning); font-size: 1.4rem;">${daysLeft} días</strong>
+                        </p>
+                        <button class="btn btn-gold" onclick="openModal('paymentModal')" style="margin-top: 1rem; padding: 1rem 2rem; font-size: 1.1rem;">
+                            <i class="fas fa-crown"></i> Activar PRO (S/ 30)
+                        </button>
+                    </div>
+                `;
+            }
         }
 
         async function loadServices() {
             try {
-                // Usar datos demo
-                allServices = [...demoServices];
-                allServices.sort((a, b) => b.isPro - a.isPro);
-                renderServices(allServices);
+                const { data } = await supabase
+                    .from('services')
+                    .select('*, service_images(count)')
+                    .eq('therapist_id', therapistData.id)
+                    .is('deleted_at', null)
+                    .order('created_at', { ascending: false });
+
+                const approved = data?.filter(s => s.status === 'approved').length || 0;
+                document.getElementById('statServices').textContent = approved;
+
+                const list = document.getElementById('servicesList');
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 2rem;">No tienes servicios aún</p>';
+                    return;
+                }
+
+                list.innerHTML = data.map(service => `
+                    <div class="service-item">
+                        <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem; flex-wrap: wrap;">
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">${service.name}</h3>
+                                <p style="color: var(--muted); margin: 0; font-size: 0.9rem;">
+                                    📍 ${service.location} • 💰 S/ ${service.price}
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                                <span style="padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 600; background: ${service.status === 'approved' ? 'var(--success)' : service.status === 'pending' ? 'var(--warning)' : 'var(--error)'}; color: ${service.status === 'pending' ? '#000' : 'white'};">
+                                    ${service.status === 'approved' ? '✓ Aprobado' : service.status === 'pending' ? '⏳ Pendiente' : '✗ Rechazado'}
+                                </span>
+                                ${service.status === 'approved' ? `
+                                    <button class="btn btn-danger" onclick="deleteService('${service.id}')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
             } catch (error) {
                 console.error('Error:', error);
-                showToast('Error al cargar servicios', 'error');
             }
         }
 
-        function searchServices(query) {
-            if (query.length > 2) {
-                const filtered = allServices.filter(s =>
-                    s.name.toLowerCase().includes(query.toLowerCase()) ||
-                    s.description.toLowerCase().includes(query.toLowerCase()) ||
-                    s.therapistName.toLowerCase().includes(query.toLowerCase())
-                );
-                renderServices(filtered);
-            } else if (query.length === 0) {
-                renderServices(allServices);
+        function openAddService() {
+            if (todayServicesCount >= 4) {
+                showToast('Límite de 4 publicaciones diarias alcanzado', 'error');
+                return;
             }
+            openModal('addServiceModal');
         }
 
-        function applyFilters() {
-            let filtered = [...allServices];
+        document.getElementById('serviceImages').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
             
-            const category = document.getElementById('categoryFilter').value;
-            const location = document.getElementById('locationFilter').value;
-
-            if (category) {
-                filtered = filtered.filter(s => s.category === category);
+            if (files.length < 2) {
+                showToast('Mínimo 2 fotos', 'error');
+                e.target.value = '';
+                return;
             }
-
-            if (location) {
-                filtered = filtered.filter(s => 
-                    s.location.toLowerCase().includes(location.toLowerCase())
-                );
+            
+            if (uploadedImages.length + files.length > 5) {
+                showToast('Máximo 5 fotos', 'error');
+                return;
             }
+            
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImages.push({ file, preview: e.target.result });
+                    renderImagePreviews();
+                };
+                reader.readAsDataURL(file);
+            });
+        });
 
-            renderServices(filtered);
-            showToast(`${filtered.length} servicios encontrados`, 'success');
+        function renderImagePreviews() {
+            const preview = document.getElementById('imagesPreview');
+            const count = document.getElementById('imageCount');
+            
+            preview.innerHTML = uploadedImages.map((img, i) => `
+                <div class="preview-item">
+                    <img src="${img.preview}" alt="Preview ${i+1}">
+                    <button class="remove-img" onclick="removeImage(${i})">×</button>
+                </div>
+            `).join('');
+            
+            const color = uploadedImages.length >= 2 ? 'var(--success)' : 'var(--warning)';
+            count.innerHTML = `<span style="color: ${color};">${uploadedImages.length}/5 fotos ${uploadedImages.length < 2 ? '(mín 2)' : ''}</span>`;
+            
+            document.getElementById('createServiceBtn').disabled = uploadedImages.length < 2;
         }
 
-        function renderServices(data) {
-            const grid = document.getElementById('servicesGrid');
-            
-            if (data.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1 / -1;">
-                        <i class="fas fa-search"></i>
-                        <h3>No se encontraron servicios</h3>
-                        <p>Intenta con otros filtros de búsqueda</p>
-                    </div>
-                `;
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            renderImagePreviews();
+        }
+
+        async function createService() {
+            if (uploadedImages.length < 2) {
+                showToast('Mínimo 2 fotos requeridas', 'error');
                 return;
             }
 
-            grid.innerHTML = data.map((service, idx) => {
-                const message = encodeURIComponent(
-                    `¡Hola! Vi tu servicio en KusiRelax:\n\n*${service.name}*\nPrecio: S/ ${service.price}\n\n¿Puedo agendar una cita? 😊`
-                );
-                const whatsappLink = `https://wa.me/51${service.therapistPhone.replace(/\D/g, '')}?text=${message}`;
+            const name = document.getElementById('serviceName').value.trim();
+            const category = document.getElementById('serviceCategory').value;
+            const description = document.getElementById('serviceDescription').value.trim();
+            const price = document.getElementById('servicePrice').value;
+            const location = document.getElementById('serviceLocation').value.trim();
 
-                return `
-                    <div class="service-card">
-                        <div class="service-images" id="images-${service.id}">
-                            ${service.isPro ? '<div class="pro-badge"><i class="fas fa-crown"></i> TERAPEUTA PRO</div>' : ''}
-                            ${service.images.map((img, i) => `
-                                <img src="${img}" class="service-image ${i === 0 ? 'active' : ''}" alt="${service.name}">
-                            `).join('')}
-                            ${service.images.length > 1 ? `
-                                <div class="image-nav">
-                                    ${service.images.map((_, i) => `
-                                        <div class="image-dot ${i === 0 ? 'active' : ''}" onclick="changeImage(${service.id}, ${i})"></div>
-                                    `).join('')}
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="service-content">
-                            <div class="service-header">
-                                <div>
-                                    <div class="service-name">${service.name}</div>
-                                    <div class="therapist-name"><i class="fas fa-user-md"></i> ${service.therapistName}</div>
-                                </div>
-                                <div class="therapist-avatar">${service.therapistName.charAt(0)}</div>
-                            </div>
-                            
-                            <div class="service-location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                ${service.location}
-                            </div>
-                            
-                            <div class="service-description">${service.description}</div>
-                            
-                            <div class="service-footer">
-                                <div class="service-price">S/ ${parseFloat(service.price).toFixed(2)}</div>
-                                <a href="${whatsappLink}" target="_blank" class="whatsapp-btn">
-                                    <i class="fab fa-whatsapp"></i> Contactar
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            if (!name || !category || !description || !price || !location) {
+                showToast('Completa todos los campos', 'error');
+                return;
+            }
 
-            // Auto-rotate images
-            data.forEach(service => {
-                if (service.images.length > 1) {
-                    let currentIndex = 0;
-                    setInterval(() => {
-                        currentIndex = (currentIndex + 1) % service.images.length;
-                        changeImage(service.id, currentIndex);
-                    }, 4000);
+            showLoader(true);
+
+            try {
+                const { data: service, error } = await supabase
+                    .from('services')
+                    .insert([{
+                        therapist_id: therapistData.id,
+                        name, category, description, price, location,
+                        status: 'pending'
+                    }])
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                for (let i = 0; i < uploadedImages.length; i++) {
+                    const fileName = `service_${service.id}_${Date.now()}_${i}.jpg`;
+                    const { error: uploadError } = await supabase.storage
+                        .from('service-images')
+                        .upload(fileName, uploadedImages[i].file);
+
+                    if (!uploadError) {
+                        const { data: { publicUrl } } = supabase.storage
+                            .from('service-images')
+                            .getPublicUrl(fileName);
+
+                        await supabase
+                            .from('service_images')
+                            .insert([{
+                                service_id: service.id,
+                                image_url: publicUrl,
+                                image_order: i
+                            }]);
+                    }
                 }
+
+                closeModal('addServiceModal');
+                uploadedImages = [];
+                document.getElementById('imagesPreview').innerHTML = '';
+                document.getElementById('imageCount').textContent = '0/5 fotos';
+                await loadServices();
+                await loadTodayCount();
+                
+                showToast('¡Servicio creado! Esperando aprobación 🕐', 'success');
+
+                const message = encodeURIComponent(
+                    `🌟 NUEVO SERVICIO\n\nTerapeuta: ${currentUser.name}\nServicio: ${name}\nPrecio: S/ ${price}\nFotos: ${uploadedImages.length}\n\nRevisar en admin.kusirelax.com`
+                );
+                
+                setTimeout(() => {
+                    window.open(`https://wa.me/51910680644?text=${message}`, '_blank');
+                }, 1000);
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function deleteService(id) {
+            if (!confirm('¿Eliminar este servicio?')) return;
+
+            showLoader(true);
+            try {
+                await supabase
+                    .from('services')
+                    .update({ deleted_at: new Date().toISOString() })
+                    .eq('id', id);
+
+                await loadServices();
+                showToast('Servicio eliminado', 'success');
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        function copyYapeNumber() {
+            navigator.clipboard.writeText('910680644').then(() => {
+                showToast('¡Número copiado! 📋', 'success');
+            }).catch(() => {
+                showToast('Error al copiar', 'error');
             });
         }
 
-        function changeImage(serviceId, index) {
-            const container = document.getElementById(`images-${serviceId}`);
-            const images = container.querySelectorAll('.service-image');
-            const dots = container.querySelectorAll('.image-dot');
-            
-            images.forEach((img, i) => {
-                img.classList.toggle('active', i === index);
-            });
-            
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
+        document.getElementById('paymentProof').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                paymentProofFile = file;
+                const preview = document.getElementById('paymentPreview');
+                
+                if (file.type.includes('image')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 200px; border-radius: 10px;"><p style="color: var(--success); margin-top: 0.5rem;">✓ ${file.name}</p>`;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.innerHTML = `<p style="color: var(--success);">✓ ${file.name}</p>`;
+                }
+                showToast('Comprobante cargado', 'success');
+            }
+        });
+
+        async function submitPayment() {
+            if (!paymentProofFile) {
+                showToast('Sube el comprobante', 'error');
+                return;
+            }
+
+            showLoader(true);
+
+            try {
+                const fileName = `payment_${therapistData.id}_${Date.now()}.${paymentProofFile.name.split('.').pop()}`;
+                const { error: uploadError } = await supabase.storage
+                    .from('payments')
+                    .upload(fileName, paymentProofFile);
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('payments')
+                    .getPublicUrl(fileName);
+
+                await supabase
+                    .from('payments')
+                    .insert([{
+                        therapist_id: therapistData.id,
+                        amount: 30.00,
+                        payment_method: 'yape',
+                        payment_proof_url: publicUrl,
+                        status: 'pending'
+                    }]);
+
+                closeModal('paymentModal');
+                paymentProofFile = null;
+                document.getElementById('paymentPreview').innerHTML = '';
+                showToast('¡Pago enviado! Verificación en 24h 🕐', 'success');
+
+                const message = encodeURIComponent(
+                    `💰 NUEVO PAGO\n\nTerapeuta: ${currentUser.name}\nMonto: S/ 30.00\nMétodo: YAPE\n\nVer en admin.kusirelax.com`
+                );
+                setTimeout(() => {
+                    window.open(`https://wa.me/51910680644?text=${message}`, '_blank');
+                }, 1000);
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
         }
 
         function showLoader(show) {
@@ -784,16 +951,44 @@
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
             document.body.appendChild(toast);
             setTimeout(() => toast.classList.add('show'), 100);
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            }, 4000);
         }
 
-        document.addEventListener('DOMContentLoaded', init);
+        async function logout() {
+            if (confirm('¿Cerrar sesión?')) {
+                await supabase.auth.signOut();
+                location.reload();
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        };
+
+        (async function() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: userData } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (userData && userData.user_type === 'terapeuta') {
+                    currentUser = userData;
+                    await loadTherapistData();
+                    updateUI();
+                }
+            }
+        })();
     </script>
 </body>
 </html>
