@@ -3,528 +3,508 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Terapeuta - KusiRelax</title>
+    <title>KusiRelax - Panel Terapeutas</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        :root {
+            --primary: #81e6d9;
+            --dark: #0a0f1c;
+            --card: #1a2332;
+            --text: #e2e8f0;
+            --muted: #a0aec0;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gold: #fbbf24;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #81e6d9;
-            --secondary: #bee3f8;
-            --accent: #fbb6ce;
-            --dark: #0a0f1c;
-            --card: #1a2332;
-            --lighter: #2d3748;
-            --text: #ffffff;
-            --text-secondary: #e2e8f0;
-            --text-muted: #a0aec0;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --error: #ef4444;
-        }
-
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, var(--dark), #243447);
             color: var(--text);
             min-height: 100vh;
-            font-size: 14px;
         }
 
-        /* Header Mobile */
         .header {
             background: rgba(26, 35, 50, 0.95);
-            padding: 0.8rem 1rem;
+            padding: 1rem;
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(129, 230, 217, 0.2);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .header-content {
+        .nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .logo {
-            font-size: 1.2rem;
+            font-size: 1.6rem;
             font-weight: bold;
             color: var(--primary);
-        }
-
-        .user-info {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 1rem;
         }
 
         .user-avatar {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(var(--primary), var(--accent));
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), #bee3f8);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #000;
             font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .user-name {
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .menu-btn {
-            background: none;
-            border: none;
-            color: var(--primary);
             font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0.3rem;
         }
 
-        /* Navigation Tabs */
-        .nav-tabs {
-            display: flex;
-            background: rgba(45, 55, 72, 0.6);
-            margin-top: 60px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .nav-tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .nav-tab {
-            flex: 0 0 auto;
-            padding: 0.8rem 1rem;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.3s;
-            border-bottom: 2px solid transparent;
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-
-        .nav-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .nav-tab:hover {
-            color: var(--text-secondary);
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 1rem;
-            margin-bottom: 70px;
-        }
-
-        .content-section {
-            display: none;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        /* Dashboard Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: rgba(45, 55, 72, 0.6);
-            border-radius: 12px;
-            padding: 1rem;
-            border: 1px solid rgba(129, 230, 217, 0.2);
-            backdrop-filter: blur(15px);
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-title {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-
-        .stat-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            color: #000;
-        }
-
-        .stat-icon.primary { background: linear-gradient(var(--primary), var(--secondary)); }
-        .stat-icon.success { background: linear-gradient(var(--success), #16a34a); }
-        .stat-icon.warning { background: linear-gradient(var(--warning), #d97706); }
-        .stat-icon.error { background: linear-gradient(var(--error), #dc2626); }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--text-secondary);
-        }
-
-        .stat-change {
-            font-size: 0.7rem;
-            color: var(--success);
-        }
-
-        /* Plan Cards */
-        .plans-container {
-            display: grid;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .plan-card {
-            background: rgba(45, 55, 72, 0.6);
-            border-radius: 15px;
-            padding: 1.5rem;
-            border: 2px solid rgba(129, 230, 217, 0.3);
-            position: relative;
-            backdrop-filter: blur(15px);
-        }
-
-        .plan-card.popular {
-            border-color: var(--accent);
-        }
-
-        .plan-card.popular::before {
-            content: 'MÁS POPULAR';
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(var(--accent), #f093fb);
-            color: #000;
-            padding: 0.3rem 1rem;
-            border-radius: 15px;
-            font-size: 0.6rem;
-            font-weight: bold;
-        }
-
-        .plan-header {
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .plan-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .plan-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 0.3rem;
-        }
-
-        .plan-price {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .plan-period {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
-
-        .plan-features {
-            list-style: none;
-            margin-bottom: 1.5rem;
-        }
-
-        .plan-features li {
-            padding: 0.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .plan-features li i {
-            color: var(--success);
-            width: 16px;
-        }
-
-        .plan-features li.unavailable {
-            opacity: 0.5;
-        }
-
-        .plan-features li.unavailable i {
-            color: var(--text-muted);
-        }
-
-        /* Buttons */
         .btn {
-            padding: 0.7rem 1.2rem;
+            padding: 0.7rem 1.5rem;
             border: none;
-            border-radius: 10px;
-            font-weight: 600;
+            border-radius: 25px;
             cursor: pointer;
+            font-weight: 600;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.85rem;
             text-decoration: none;
-            justify-content: center;
+            font-size: 0.95rem;
         }
 
         .btn-primary {
-            background: linear-gradient(var(--primary), var(--secondary));
+            background: var(--primary);
             color: #000;
         }
 
-        .btn-success {
-            background: var(--success);
-            color: #fff;
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
         }
 
-        .btn-warning {
-            background: var(--warning);
-            color: #fff;
+        .btn-gold {
+            background: linear-gradient(90deg, var(--gold), #f59e0b);
+            color: #000;
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
         }
 
         .btn-danger {
             background: var(--error);
-            color: #fff;
-        }
-
-        .btn-secondary {
-            background: rgba(129, 230, 217, 0.1);
-            color: var(--primary);
-            border: 2px solid var(--primary);
+            color: white;
         }
 
         .btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(129, 230, 217, 0.4);
         }
 
         .btn-full {
             width: 100%;
-        }
-
-        .btn-sm {
-            padding: 0.5rem 0.8rem;
-            font-size: 0.75rem;
-        }
-
-        /* Services Table */
-        .table-container {
-            background: rgba(45, 55, 72, 0.6);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(129, 230, 217, 0.2);
-        }
-
-        .table-header {
+            justify-content: center;
             padding: 1rem;
-            background: rgba(26, 35, 50, 0.8);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .table-title {
             font-size: 1rem;
-            font-weight: 600;
         }
 
-        .services-list {
-            padding: 1rem;
-        }
-
-        .service-item {
-            background: rgba(26, 35, 50, 0.5);
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(129, 230, 217, 0.1);
-        }
-
-        .service-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .service-name {
-            font-weight: bold;
-            margin-bottom: 0.3rem;
-            color: var(--text-secondary);
-        }
-
-        .service-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .service-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .status-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-active {
-            background: rgba(34, 197, 94, 0.2);
-            color: var(--success);
-        }
-
-        .status-pending {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--warning);
-        }
-
-        .status-suspended {
-            background: rgba(239, 68, 68, 0.2);
+        .logout-btn {
+            background: none;
+            border: none;
             color: var(--error);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            transition: all 0.3s;
         }
 
-        /* Forms */
-        .form-container {
-            background: rgba(45, 55, 72, 0.6);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(129, 230, 217, 0.2);
+        .logout-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .main {
+            margin-top: 80px;
+            padding: 2rem 1rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        .auth-section {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(45, 55, 72, 0.8);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 2px solid rgba(129, 230, 217, 0.3);
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.6rem;
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .form-label {
+        .form-group label {
             display: block;
-            margin-bottom: 0.4rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            padding: 0.7rem;
-            border: 2px solid rgba(129, 230, 217, 0.3);
-            border-radius: 8px;
-            background: rgba(26, 35, 50, 0.8);
+            margin-bottom: 0.7rem;
             color: var(--text);
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.95rem;
         }
 
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
+        .form-group label i {
+            color: var(--primary);
+            margin-right: 0.3rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(129, 230, 217, 0.3);
+            border-radius: 12px;
+            background: rgba(26, 35, 50, 0.9);
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(129, 230, 217, 0.3);
+            background: rgba(26, 35, 50, 1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-help {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 0.4rem;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .subscription-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(129, 230, 217, 0.2));
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .subscription-banner h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .subscription-banner .timer {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--gold);
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(45, 55, 72, 0.8);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(129, 230, 217, 0.3);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
             border-color: var(--primary);
         }
 
-        /* Modal */
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .services-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .service-item {
+            background: rgba(45, 55, 72, 0.8);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 2px solid rgba(129, 230, 217, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            transition: all 0.3s;
+        }
+
+        .service-item:hover {
+            border-color: var(--primary);
+        }
+
+        .service-info h3 {
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .service-status {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-approved {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-pending {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .status-rejected {
+            background: var(--error);
+            color: white;
+        }
+
         .modal {
             display: none;
             position: fixed;
-            z-index: 3000;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(10px);
         }
 
         .modal-content {
-            background: rgba(26, 35, 50, 0.98);
-            margin: 5% auto;
-            padding: 1.5rem;
-            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(26, 35, 50, 0.98), rgba(45, 55, 72, 0.98));
+            margin: 2% auto;
+            padding: 2.5rem;
+            border-radius: 25px;
             width: 95%;
-            max-width: 400px;
+            max-width: 650px;
             border: 2px solid var(--primary);
             max-height: 90vh;
             overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-title {
-            font-size: 1.2rem;
-            font-weight: 600;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .close {
-            color: var(--text-muted);
-            font-size: 1.5rem;
+            color: var(--muted);
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
         .close:hover {
-            color: var(--primary);
+            color: var(--error);
+            transform: rotate(90deg);
         }
 
-        /* Toast */
+        .yape-info {
+            background: linear-gradient(135deg, #722F91, #9c27b0);
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 2rem 0;
+            color: white;
+            box-shadow: 0 10px 30px rgba(114, 47, 145, 0.4);
+        }
+
+        .yape-info h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .yape-number {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            letter-spacing: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .yape-amount {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #fbbf24;
+            margin: 1.5rem 0;
+        }
+
+        .upload-area {
+            border: 3px dashed var(--primary);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 1.5rem 0;
+            background: rgba(129, 230, 217, 0.05);
+        }
+
+        .upload-area:hover {
+            background: rgba(129, 230, 217, 0.1);
+            border-color: var(--gold);
+            transform: scale(1.02);
+        }
+
+        .upload-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            margin-top: 1rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .benefits-box {
+            background: rgba(129, 230, 217, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            border: 2px solid var(--primary);
+        }
+
+        .benefits-box h4 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .benefits-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefits-box li {
+            color: var(--text);
+            line-height: 2.5;
+            font-size: 1.05rem;
+            padding-left: 0.5rem;
+        }
+
         .toast {
             position: fixed;
-            top: 70px;
-            right: 15px;
-            padding: 0.8rem 1.2rem;
-            border-radius: 8px;
-            color: #fff;
+            top: 100px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            color: white;
             font-weight: 600;
-            z-index: 5000;
+            z-index: 3000;
             opacity: 0;
             transform: translateX(100%);
             transition: all 0.3s;
-            font-size: 0.8rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .toast.show {
@@ -534,17 +514,31 @@
 
         .toast.success { background: var(--success); }
         .toast.error { background: var(--error); }
-        .toast.warning { background: var(--warning); }
-        .toast.info { background: var(--primary); }
+        .toast.warning { background: var(--warning); color: #000; }
 
-        /* Loading */
-        .loading {
+        .loader-overlay {
             display: none;
-            width: 16px;
-            height: 16px;
-            border: 3px solid rgba(129, 230, 217, 0.3);
-            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-overlay.show {
+            display: flex;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(129, 230, 217, 0.3);
             border-top-color: var(--primary);
+            border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
@@ -552,901 +546,706 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Progress Bar */
-        .progress-container {
-            background: rgba(26, 35, 50, 0.8);
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.8rem;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(129, 230, 217, 0.2);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(var(--primary), var(--secondary));
-            transition: width 0.3s ease;
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(26, 35, 50, 0.95);
-            backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(129, 230, 217, 0.2);
-            display: flex;
-            justify-content: space-around;
-            padding: 0.8rem 0;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.2rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.7rem;
-            transition: all 0.3s;
-            padding: 0.3rem;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-item i {
-            font-size: 1.2rem;
-        }
-
-        /* Responsive */
         @media (min-width: 768px) {
             .stats-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            
-            .plans-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .modal-content {
-                max-width: 500px;
-                padding: 2rem;
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
+    <div class="loader-overlay" id="loaderOverlay">
+        <div class="loader"></div>
+    </div>
+
     <header class="header">
-        <div class="header-content">
-            <div class="logo">🌸 KusiRelax Pro</div>
-            <div class="user-info">
+        <nav class="nav">
+            <a href="index.html" class="logo">
+                <i class="fas fa-spa"></i> KusiRelax PRO
+            </a>
+            
+            <div class="nav-buttons" id="guestButtons">
+                <a href="index.html" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <a href="admin.html" class="btn btn-secondary">
+                    <i class="fas fa-shield-alt"></i> Admin
+                </a>
+            </div>
+
+            <div class="user-info" id="userInfo">
+                <a href="index.html" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
                 <div class="user-avatar" id="userAvatar">T</div>
-                <div class="user-name" id="userName">Terapeuta</div>
-                <button class="menu-btn" onclick="toggleMenu()">
-                    <i class="fas fa-bars"></i>
+                <div>
+                    <div id="userName" style="font-weight: 600;">Terapeuta</div>
+                    <div id="subscriptionStatus" style="font-size: 0.85rem; color: var(--muted);">Prueba Gratis</div>
+                </div>
+                <button class="logout-btn" onclick="logout()" title="Cerrar Sesión">
+                    <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
-        </div>
+        </nav>
     </header>
 
-    <!-- Navigation Tabs -->
-    <nav class="nav-tabs">
-        <button class="nav-tab active" onclick="showTab('dashboard')">
-            <i class="fas fa-chart-line"></i> Dashboard
-        </button>
-        <button class="nav-tab" onclick="showTab('subscription')">
-            <i class="fas fa-crown"></i> Suscripción
-        </button>
-        <button class="nav-tab" onclick="showTab('services')">
-            <i class="fas fa-spa"></i> Servicios
-        </button>
-        <button class="nav-tab" onclick="showTab('earnings')">
-            <i class="fas fa-dollar-sign"></i> Ganancias
-        </button>
-        <button class="nav-tab" onclick="showTab('profile')">
-            <i class="fas fa-user"></i> Perfil
-        </button>
-    </nav>
+    <main class="main">
+        <section class="hero auth-section" id="authSection">
+            <h1>🌟 Panel de Terapeutas</h1>
+            <p>Gestiona tus servicios y atrae más clientes</p>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Dashboard -->
-        <section id="dashboard-section" class="content-section active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Servicios</div>
-                        <div class="stat-icon primary">
-                            <i class="fas fa-spa"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="totalServices">3</div>
-                    <div class="stat-change">+1 este mes</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Reservas</div>
-                        <div class="stat-icon success">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="totalBookings">24</div>
-                    <div class="stat-change">+8% vs anterior</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Ingresos</div>
-                        <div class="stat-icon warning">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="totalEarnings">S/ 4,320</div>
-                    <div class="stat-change">+15% vs anterior</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Rating</div>
-                        <div class="stat-icon error">
-                            <i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="avgRating">4.8</div>
-                    <div class="stat-change">Excelente</div>
-                </div>
-            </div>
-
-            <!-- Subscription Status -->
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Plan Premium</span>
-                    <span id="planStatus">4 días restantes</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 20%" id="planProgress"></div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="form-container">
-                <h3 style="margin-bottom: 1rem; color: var(--primary);">Acciones Rápidas</h3>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                    <button class="btn btn-primary" onclick="openServiceModal()">
-                        <i class="fas fa-plus"></i> Nuevo Servicio
-                    </button>
-                    <button class="btn btn-success" onclick="viewBookings()">
-                        <i class="fas fa-calendar"></i> Ver Reservas
-                    </button>
-                    <button class="btn btn-warning" onclick="manageSchedule()">
-                        <i class="fas fa-clock"></i> Horarios
-                    </button>
-                    <button class="btn btn-secondary" onclick="viewAnalytics()">
-                        <i class="fas fa-chart-bar"></i> Estadísticas
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Subscription -->
-        <section id="subscription-section" class="content-section">
-            <div class="plans-container">
-                <div class="plan-card">
-                    <div class="plan-header">
-                        <div class="plan-icon">🌱</div>
-                        <div class="plan-name">Plan Básico</div>
-                        <div class="plan-price">Gratis</div>
-                        <div class="plan-period">Para empezar</div>
-                    </div>
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check"></i> 1 servicio</li>
-                        <li><i class="fas fa-check"></i> Perfil básico</li>
-                        <li><i class="fas fa-check"></i> Contacto directo</li>
-                        <li class="unavailable"><i class="fas fa-times"></i> Galería fotos</li>
-                        <li class="unavailable"><i class="fas fa-times"></i> Calendario</li>
-                    </ul>
-                    <button class="btn btn-secondary btn-full" disabled>Plan Actual</button>
-                </div>
-
-                <div class="plan-card popular">
-                    <div class="plan-header">
-                        <div class="plan-icon">⭐</div>
-                        <div class="plan-name">Plan Premium</div>
-                        <div class="plan-price">S/ 30</div>
-                        <div class="plan-period">por día (4 días gratis)</div>
-                    </div>
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check"></i> 5 servicios</li>
-                        <li><i class="fas fa-check"></i> Galería 10 fotos</li>
-                        <li><i class="fas fa-check"></i> Calendario integrado</li>
-                        <li><i class="fas fa-check"></i> Estadísticas básicas</li>
-                        <li><i class="fas fa-check"></i> Badge "Verificado"</li>
-                    </ul>
-                    <button class="btn btn-primary btn-full" onclick="selectPlan('premium')">
-                        <i class="fas fa-star"></i> Upgrade a Premium
-                    </button>
-                </div>
-
-                <div class="plan-card">
-                    <div class="plan-header">
-                        <div class="plan-icon">💎</div>
-                        <div class="plan-name">Plan Pro</div>
-                        <div class="plan-price">S/ 50</div>
-                        <div class="plan-period">por día</div>
-                    </div>
-                    <ul class="plan-features">
-                        <li><i class="fas fa-check"></i> Servicios ilimitados</li>
-                        <li><i class="fas fa-check"></i> Galería ilimitada</li>
-                        <li><i class="fas fa-check"></i> Calendario avanzado</li>
-                        <li><i class="fas fa-check"></i> Estadísticas completas</li>
-                        <li><i class="fas fa-check"></i> Posición destacada</li>
-                    </ul>
-                    <button class="btn btn-secondary btn-full" onclick="selectPlan('pro')">
-                        <i class="fas fa-gem"></i> Upgrade a Pro
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Services -->
-        <section id="services-section" class="content-section">
-            <div class="table-container">
-                <div class="table-header">
-                    <div class="table-title">Mis Servicios</div>
-                    <button class="btn btn-primary btn-sm" onclick="openServiceModal()">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-                <div class="services-list" id="servicesList">
-                    <!-- Services will be loaded here -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Earnings -->
-        <section id="earnings-section" class="content-section">
-            <div class="stats-grid" style="grid-template-columns: 1fr;">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Total Este Mes</div>
-                        <div class="stat-icon success">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">S/ 4,320</div>
-                    <div class="stat-change">+15% vs mes anterior</div>
-                </div>
-            </div>
-
-            <div class="form-container">
-                <h3 style="margin-bottom: 1rem; color: var(--primary);">Resumen de Ganancias</h3>
-                <div style="display: grid; gap: 1rem;">
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(129, 230, 217, 0.1);">
-                        <span>Servicios completados:</span>
-                        <span style="font-weight: bold;">24</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(129, 230, 217, 0.1);">
-                        <span>Ingresos brutos:</span>
-                        <span style="font-weight: bold;">S/ 4,800</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(129, 230, 217, 0.1);">
-                        <span>Comisión plataforma (10%):</span>
-                        <span style="color: var(--error);">-S/ 480</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-weight: bold; color: var(--success);">
-                        <span>Total neto:</span>
-                        <span>S/ 4,320</span>
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary btn-full" style="margin-top: 1rem;" onclick="requestPayout()">
-                    <i class="fas fa-money-bill-transfer"></i> Solicitar Retiro
-                </button>
-            </div>
-        </section>
-
-        <!-- Profile -->
-        <section id="profile-section" class="content-section">
-            <div class="form-container">
-                <h3 style="margin-bottom: 1rem; color: var(--primary);">Mi Perfil</h3>
-                <form id="profileForm">
+            <div class="card">
+                <h2><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+                <form id="loginForm">
                     <div class="form-group">
-                        <label class="form-label">Nombre Completo</label>
-                        <input type="text" class="form-input" id="profileName" value="Ana Rodríguez">
+                        <label><i class="fas fa-envelope"></i> Email:</label>
+                        <input type="email" id="loginEmail" required placeholder="tu@email.com" autocomplete="email">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="profileEmail" value="ana@email.com">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Teléfono</label>
-                        <input type="tel" class="form-input" id="profilePhone" value="+51 987 654 322">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Especialidad</label>
-                        <input type="text" class="form-input" id="profileSpecialty" value="Masajes Terapéuticos">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Descripción</label>
-                        <textarea class="form-textarea" id="profileDescription" rows="4" placeholder="Describe tu experiencia y especialidades...">Terapeuta certificada con 5 años de experiencia en masajes relajantes y terapéuticos.</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Ubicación</label>
-                        <input type="text" class="form-input" id="profileLocation" value="Cusco Centro">
+                        <label><i class="fas fa-lock"></i> Contraseña:</label>
+                        <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password">
                     </div>
                     <button type="submit" class="btn btn-primary btn-full">
-                        <i class="fas fa-save"></i> Guardar Cambios
-                        <div class="loading" id="profileLoading"></div>
+                        <i class="fas fa-sign-in-alt"></i> Entrar
                     </button>
                 </form>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-user-plus"></i> Crear Cuenta Gratis</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Nombre Completo:</label>
+                        <input type="text" id="registerName" required placeholder="Ej: María González" autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email:</label>
+                        <input type="email" id="registerEmail" required placeholder="tu@email.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fab fa-whatsapp"></i> Teléfono WhatsApp:</label>
+                        <input type="tel" id="registerPhone" required placeholder="+51 999 999 999" autocomplete="tel">
+                        <div class="form-help">Los clientes te contactarán por WhatsApp</div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Contraseña:</label>
+                        <input type="password" id="registerPassword" required placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="btn btn-gold btn-full">
+                        <i class="fas fa-gift"></i> Crear Cuenta (4 días gratis)
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="dashboard" id="dashboardSection">
+            <div id="subscriptionBanner"></div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statServices">0</div>
+                    <div class="stat-label">Servicios Activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statViews">0</div>
+                    <div class="stat-label">Vistas Totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statContacts">0</div>
+                    <div class="stat-label">Contactos WhatsApp</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                    <h2 style="margin: 0;"><i class="fas fa-list"></i> Mis Servicios</h2>
+                    <button class="btn btn-primary" onclick="openModal('addServiceModal')">
+                        <i class="fas fa-plus"></i> Nuevo Servicio
+                    </button>
+                </div>
+                <div class="services-list" id="servicesList"></div>
             </div>
         </section>
     </main>
 
-    <!-- Service Modal -->
-    <div id="serviceModal" class="modal">
+    <div id="addServiceModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="serviceModalTitle">Nuevo Servicio</h2>
-                <span class="close" onclick="closeModal('serviceModal')">&times;</span>
-            </div>
-            <form id="serviceForm">
+            <span class="close" onclick="closeModal('addServiceModal')">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 2rem; font-size: 1.8rem;">
+                <i class="fas fa-plus-circle"></i> Crear Nuevo Servicio
+            </h2>
+            <form id="addServiceForm">
                 <div class="form-group">
-                    <label class="form-label">Nombre del Servicio</label>
-                    <input type="text" class="form-input" id="serviceName" required>
+                    <label><i class="fas fa-tag"></i> Nombre del Servicio:</label>
+                    <input type="text" id="serviceName" required placeholder="Ej: Masaje Relajante de 60 minutos">
+                    <div class="form-help">Nombre atractivo y descriptivo</div>
                 </div>
+                
                 <div class="form-group">
-                    <label class="form-label">Descripción</label>
-                    <textarea class="form-textarea" id="serviceDescription" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Precio (S/)</label>
-                    <input type="number" class="form-input" id="servicePrice" min="0" step="10" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Duración (minutos)</label>
-                    <input type="number" class="form-input" id="serviceDuration" min="15" step="15" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Categoría</label>
-                    <select class="form-select" id="serviceCategory" required>
-                        <option value="">Seleccionar...</option>
-                        <option value="masaje">Masaje</option>
-                        <option value="spa">Spa</option>
-                        <option value="yoga">Yoga</option>
-                        <option value="meditacion">Meditación</option>
-                        <option value="reiki">Reiki</option>
+                    <label><i class="fas fa-th-large"></i> Categoría:</label>
+                    <select id="serviceCategory" required>
+                        <option value="">Seleccionar categoría...</option>
+                        <option value="masaje">💆 Masajes</option>
+                        <option value="spa">🧖 Spa & Relajación</option>
+                        <option value="yoga">🧘 Yoga</option>
+                        <option value="meditacion">🕉️ Meditación</option>
+                        <option value="reiki">✨ Reiki</option>
+                        <option value="terapia">🌿 Terapias</option>
                     </select>
                 </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('serviceModal')" style="flex: 1;">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" style="flex: 1;">
-                        <span id="serviceSubmitText">Crear</span>
-                        <div class="loading" id="serviceLoading"></div>
-                    </button>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-align-left"></i> Descripción Completa:</label>
+                    <textarea id="serviceDescription" rows="5" required placeholder="Describe tu servicio: qué incluye, beneficios, duración, etc."></textarea>
+                    <div class="form-help">Sé detallado para atraer más clientes</div>
                 </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-money-bill-wave"></i> Precio (S/):</label>
+                    <input type="number" id="servicePrice" required placeholder="50.00" step="0.01" min="0">
+                    <div class="form-help">Precio por sesión</div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Ubicación:</label>
+                    <input type="text" id="serviceLocation" required placeholder="Ej: Cusco Centro, Av. El Sol 123">
+                    <div class="form-help">Dirección donde ofreces el servicio</div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Imagen del Servicio (URL):</label>
+                    <input type="url" id="serviceImage" placeholder="https://ejemplo.com/imagen.jpg">
+                    <div class="form-help">Opcional: URL de una imagen profesional de tu servicio</div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-check-circle"></i> Crear Servicio
+                </button>
             </form>
         </div>
     </div>
 
-    <!-- Payment Modal -->
     <div id="paymentModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Upgrade de Plan</h2>
-                <span class="close" onclick="closeModal('paymentModal')">&times;</span>
+            <span class="close" onclick="closeModal('paymentModal')">&times;</span>
+            <h2 style="color: var(--gold); margin-bottom: 2rem; text-align: center; font-size: 2rem;">
+                <i class="fas fa-crown"></i> Activar Plan PRO
+            </h2>
+
+            <div class="yape-info">
+                <h3><i class="fas fa-mobile-alt"></i> Yapea a:</h3>
+                <div class="yape-number">910 680 644</div>
+                <div class="yape-amount">S/ 30.00</div>
+                <p style="font-size: 1rem; opacity: 0.95;">✨ Válido por 48 horas ✨</p>
             </div>
-            <div id="paymentContent">
-                <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid var(--success); border-radius: 10px; padding: 1rem; margin-bottom: 1rem; text-align: center; color: var(--success);">
-                    <i class="fas fa-gift"></i> ¡4 días completamente gratis!
-                </div>
-                
-                <div style="background: rgba(26, 35, 50, 0.8); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
-                    <h4 style="margin-bottom: 1rem;">Resumen del Plan</h4>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span>Plan Premium</span>
-                        <span>S/ 30.00/día</span>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label style="color: var(--primary); font-size: 1.2rem;">
+                        <i class="fas fa-camera"></i> Sube la captura de tu pago:
+                    </label>
+                    <div class="upload-area" onclick="document.getElementById('paymentProof').click()">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <p style="color: var(--text); font-size: 1.1rem; margin-bottom: 0.5rem;">
+                            Click aquí para subir captura
+                        </p>
+                        <p style="color: var(--muted); font-size: 0.9rem;">
+                            Formatos: JPG, PNG, PDF
+                        </p>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span>Prueba gratis</span>
-                        <span style="color: var(--success);">-S/ 120.00</span>
-                    </div>
-                    <hr style="border: 1px solid rgba(129, 230, 217, 0.2); margin: 0.5rem 0;">
-                    <div style="display: flex; justify-content: space-between; font-weight: bold; color: var(--primary);">
-                        <span>Total a pagar hoy</span>
-                        <span>S/ 0.00 (Gratis)</span>
-                    </div>
+                    <input type="file" id="paymentProof" accept="image/*" style="display: none;" required>
+                    <img id="paymentPreview" class="upload-preview" style="display: none;">
                 </div>
 
-                <form id="paymentForm">
-                    <div class="form-group">
-                        <label class="form-label">Número de Tarjeta</label>
-                        <input type="text" class="form-input" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Nombre del Titular</label>
-                        <input type="text" class="form-input" id="cardHolder" placeholder="NOMBRE APELLIDO">
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                        <div class="form-group">
-                            <label class="form-label">Vencimiento</label>
-                            <input type="text" class="form-input" id="cardExpiry" placeholder="MM/AA" maxlength="5">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">CVV</label>
-                            <input type="text" class="form-input" id="cardCvv" placeholder="123" maxlength="4">
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('paymentModal')" style="flex: 1;">Cancelar</button>
-                        <button type="submit" class="btn btn-primary" style="flex: 2;">
-                            <span id="paymentSubmitText">Comenzar Prueba Gratis</span>
-                            <div class="loading" id="paymentLoading"></div>
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="benefits-box">
+                    <h4><i class="fas fa-star"></i> Beneficios del Plan PRO:</h4>
+                    <ul>
+                        <li>✨ Apareces primero en todas las búsquedas</li>
+                        <li>👑 Badge dorado "TERAPEUTA PRO"</li>
+                        <li>📊 Estadísticas detalladas de rendimiento</li>
+                        <li>🎯 Hasta 3x más visibilidad</li>
+                        <li>💼 Apoyo prioritario</li>
+                    </ul>
+                </div>
+
+                <button type="submit" class="btn btn-gold btn-full" style="font-size: 1.2rem; padding: 1.2rem;">
+                    <i class="fas fa-paper-plane"></i> Enviar Comprobante
+                </button>
+
+                <p style="text-align: center; margin-top: 1.5rem; color: var(--muted); font-size: 0.95rem;">
+                    <i class="fas fa-shield-alt"></i> Verificaremos tu pago en menos de 24 horas
+                </p>
+            </form>
         </div>
     </div>
 
     <script>
-        // Therapist Panel System
-        class TherapistPanel {
-            constructor() {
-                this.user = JSON.parse(localStorage.getItem('therapist_user') || 'null');
-                this.services = JSON.parse(localStorage.getItem('therapist_services') || '[]');
-                this.subscription = JSON.parse(localStorage.getItem('therapist_subscription') || '{}');
-                this.earnings = JSON.parse(localStorage.getItem('therapist_earnings') || '{}');
-                
-                this.init();
-            }
+        const SUPABASE_URL = 'https://dxpoxnebekmwrarjnqkv.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4cG94bmViZWttd3JhcmpucWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2NzgyNTUsImV4cCI6MjA3NTI1NDI1NX0.W51sb2JrEQ-i-fkKWdHVnC0HuDP4X_968SbE0vQagUE';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            init() {
-                this.generateSampleData();
-                this.setupEvents();
-                this.updateDashboard();
-                this.loadServices();
-            }
+        let currentUser = null;
+        let therapistData = null;
+        let timerInterval = null;
 
-            generateSampleData() {
-                if (!this.user) {
-                    this.user = {
-                        id: 2,
-                        name: 'Ana Rodríguez',
-                        email: 'ana@email.com',
-                        phone: '+51 987 654 322',
-                        specialty: 'Masajes Terapéuticos',
-                        location: 'Cusco Centro'
-                    };
-                    localStorage.setItem('therapist_user', JSON.stringify(this.user));
+        async function init() {
+            showLoader(true);
+            await checkAuth();
+            setupEvents();
+            showLoader(false);
+        }
+
+        async function checkAuth() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: userData } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (userData && userData.user_type === 'terapeuta') {
+                    currentUser = userData;
+                    await loadTherapistData();
+                    updateUI();
                 }
-
-                if (this.services.length === 0) {
-                    this.services = [
-                        {
-                            id: 1,
-                            name: 'Masaje Relajante',
-                            description: 'Masaje corporal completo con aceites esenciales',
-                            price: 180,
-                            duration: 60,
-                            category: 'masaje',
-                            status: 'active',
-                            bookings: 12
-                        },
-                        {
-                            id: 2,
-                            name: 'Tratamiento Facial',
-                            description: 'Limpieza facial profunda con mascarilla',
-                            price: 150,
-                            duration: 75,
-                            category: 'spa',
-                            status: 'active',
-                            bookings: 8
-                        },
-                        {
-                            id: 3,
-                            name: 'Reiki Energético',
-                            description: 'Sesión de sanación energética',
-                            price: 140,
-                            duration: 60,
-                            category: 'reiki',
-                            status: 'pending',
-                            bookings: 4
-                        }
-                    ];
-                    localStorage.setItem('therapist_services', JSON.stringify(this.services));
-                }
-
-                if (!this.subscription.plan) {
-                    this.subscription = {
-                        plan: 'basic',
-                        status: 'active',
-                        daysRemaining: 0,
-                        servicesLimit: 1,
-                        servicesUsed: 3
-                    };
-                    localStorage.setItem('therapist_subscription', JSON.stringify(this.subscription));
-                }
-
-                if (!this.earnings.total) {
-                    this.earnings = {
-                        total: 4320,
-                        thisMonth: 4320,
-                        completedServices: 24,
-                        grossEarnings: 4800,
-                        commission: 480
-                    };
-                    localStorage.setItem('therapist_earnings', JSON.stringify(this.earnings));
-                }
-            }
-
-            setupEvents() {
-                // Profile form
-                document.getElementById('profileForm').onsubmit = (e) => {
-                    e.preventDefault();
-                    this.saveProfile();
-                };
-
-                // Service form
-                document.getElementById('serviceForm').onsubmit = (e) => {
-                    e.preventDefault();
-                    this.saveService();
-                };
-
-                // Payment form
-                document.getElementById('paymentForm').onsubmit = (e) => {
-                    e.preventDefault();
-                    this.processPayment();
-                };
-
-                // Card formatting
-                this.setupCardFormatting();
-            }
-
-            setupCardFormatting() {
-                const cardNumber = document.getElementById('cardNumber');
-                const cardExpiry = document.getElementById('cardExpiry');
-                const cardCvv = document.getElementById('cardCvv');
-
-                if (cardNumber) {
-                    cardNumber.oninput = (e) => {
-                        let value = e.target.value.replace(/\D/g, '');
-                        let formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ');
-                        if (formatted.length > 19) formatted = formatted.substring(0, 19);
-                        e.target.value = formatted;
-                    };
-                }
-
-                if (cardExpiry) {
-                    cardExpiry.oninput = (e) => {
-                        let value = e.target.value.replace(/\D/g, '');
-                        if (value.length >= 2) {
-                            value = value.substring(0, 2) + '/' + value.substring(2, 4);
-                        }
-                        e.target.value = value;
-                    };
-                }
-
-                if (cardCvv) {
-                    cardCvv.oninput = (e) => {
-                        e.target.value = e.target.value.replace(/\D/g, '');
-                    };
-                }
-            }
-
-            updateDashboard() {
-                if (this.user) {
-                    document.getElementById('userAvatar').textContent = this.user.name.charAt(0);
-                    document.getElementById('userName').textContent = this.user.name.split(' ')[0];
-                }
-
-                document.getElementById('totalServices').textContent = this.services.length;
-                document.getElementById('totalBookings').textContent = this.services.reduce((sum, s) => sum + s.bookings, 0);
-                document.getElementById('totalEarnings').textContent = 'S/ ' + this.earnings.total.toLocaleString();
-                document.getElementById('avgRating').textContent = '4.8';
-
-                // Update plan status
-                const planStatus = document.getElementById('planStatus');
-                const planProgress = document.getElementById('planProgress');
-                
-                if (this.subscription.plan === 'premium') {
-                    planStatus.textContent = `${this.subscription.daysRemaining} días restantes`;
-                    planProgress.style.width = `${(this.subscription.daysRemaining / 30) * 100}%`;
-                } else {
-                    planStatus.textContent = 'Plan Básico';
-                    planProgress.style.width = '100%';
-                }
-            }
-
-            loadServices() {
-                const container = document.getElementById('servicesList');
-                container.innerHTML = '';
-
-                this.services.forEach(service => {
-                    const item = document.createElement('div');
-                    item.className = 'service-item';
-                    item.innerHTML = `
-                        <div class="service-name">${service.name}</div>
-                        <div class="service-meta">
-                            <span>S/ ${service.price} • ${service.duration} min</span>
-                            <span class="status-badge status-${service.status}">
-                                ${service.status === 'active' ? 'Activo' : service.status === 'pending' ? 'Pendiente' : 'Pausado'}
-                            </span>
-                        </div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-                            ${service.bookings} reservas • ${service.category}
-                        </div>
-                        <div class="service-actions">
-                            <button class="btn btn-secondary btn-sm" onclick="therapistPanel.editService(${service.id})">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
-                            <button class="btn btn-${service.status === 'active' ? 'warning' : 'success'} btn-sm" onclick="therapistPanel.toggleService(${service.id})">
-                                <i class="fas fa-${service.status === 'active' ? 'pause' : 'play'}"></i>
-                                ${service.status === 'active' ? 'Pausar' : 'Activar'}
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="therapistPanel.deleteService(${service.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    container.appendChild(item);
-                });
-            }
-
-            selectPlan(planType) {
-                if (planType === this.subscription.plan) {
-                    this.showToast('Ya tienes este plan activo', 'info');
-                    return;
-                }
-                openModal('paymentModal');
-            }
-
-            async processPayment() {
-                this.showLoading('payment', true);
-
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-
-                    this.subscription = {
-                        plan: 'premium',
-                        status: 'active',
-                        daysRemaining: 4,
-                        servicesLimit: 5,
-                        servicesUsed: this.services.length
-                    };
-
-                    localStorage.setItem('therapist_subscription', JSON.stringify(this.subscription));
-                    
-                    this.updateDashboard();
-                    closeModal('paymentModal');
-                    this.showToast('¡Plan Premium activado! 4 días gratis', 'success');
-
-                } catch (error) {
-                    this.showToast('Error al procesar el pago', 'error');
-                } finally {
-                    this.showLoading('payment', false);
-                }
-            }
-
-            openServiceModal(serviceId = null) {
-                const modal = document.getElementById('serviceModal');
-                const title = document.getElementById('serviceModalTitle');
-                const form = document.getElementById('serviceForm');
-
-                if (serviceId) {
-                    const service = this.services.find(s => s.id === serviceId);
-                    if (service) {
-                        title.textContent = 'Editar Servicio';
-                        document.getElementById('serviceName').value = service.name;
-                        document.getElementById('serviceDescription').value = service.description;
-                        document.getElementById('servicePrice').value = service.price;
-                        document.getElementById('serviceDuration').value = service.duration;
-                        document.getElementById('serviceCategory').value = service.category;
-                        form.dataset.serviceId = serviceId;
-                    }
-                } else {
-                    if (this.services.length >= this.subscription.servicesLimit && this.subscription.plan === 'basic') {
-                        this.showToast('Actualiza tu plan para agregar más servicios', 'warning');
-                        return;
-                    }
-                    
-                    title.textContent = 'Nuevo Servicio';
-                    form.reset();
-                    delete form.dataset.serviceId;
-                }
-
-                openModal('serviceModal');
-            }
-
-            async saveService() {
-                const form = document.getElementById('serviceForm');
-                const serviceId = form.dataset.serviceId;
-
-                this.showLoading('service', true);
-
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-
-                    const serviceData = {
-                        name: document.getElementById('serviceName').value,
-                        description: document.getElementById('serviceDescription').value,
-                        price: parseInt(document.getElementById('servicePrice').value),
-                        duration: parseInt(document.getElementById('serviceDuration').value),
-                        category: document.getElementById('serviceCategory').value,
-                        status: 'pending',
-                        bookings: 0
-                    };
-
-                    if (serviceId) {
-                        const index = this.services.findIndex(s => s.id === parseInt(serviceId));
-                        if (index !== -1) {
-                            this.services[index] = { ...this.services[index], ...serviceData };
-                        }
-                        this.showToast('Servicio actualizado', 'success');
-                    } else {
-                        serviceData.id = Date.now();
-                        this.services.push(serviceData);
-                        this.showToast('Servicio creado', 'success');
-                    }
-
-                    localStorage.setItem('therapist_services', JSON.stringify(this.services));
-                    this.loadServices();
-                    this.updateDashboard();
-                    closeModal('serviceModal');
-
-                } catch (error) {
-                    this.showToast('Error al guardar servicio', 'error');
-                } finally {
-                    this.showLoading('service', false);
-                }
-            }
-
-            editService(id) {
-                this.openServiceModal(id);
-            }
-
-            toggleService(id) {
-                const service = this.services.find(s => s.id === id);
-                if (service) {
-                    service.status = service.status === 'active' ? 'suspended' : 'active';
-                    localStorage.setItem('therapist_services', JSON.stringify(this.services));
-                    this.loadServices();
-                    this.showToast(`Servicio ${service.status === 'active' ? 'activado' : 'pausado'}`, 'success');
-                }
-            }
-
-            deleteService(id) {
-                if (confirm('¿Eliminar este servicio?')) {
-                    this.services = this.services.filter(s => s.id !== id);
-                    localStorage.setItem('therapist_services', JSON.stringify(this.services));
-                    this.loadServices();
-                    this.updateDashboard();
-                    this.showToast('Servicio eliminado', 'success');
-                }
-            }
-
-            async saveProfile() {
-                this.showLoading('profile', true);
-
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-
-                    this.user.name = document.getElementById('profileName').value;
-                    this.user.email = document.getElementById('profileEmail').value;
-                    this.user.phone = document.getElementById('profilePhone').value;
-                    this.user.specialty = document.getElementById('profileSpecialty').value;
-                    this.user.location = document.getElementById('profileLocation').value;
-
-                    localStorage.setItem('therapist_user', JSON.stringify(this.user));
-                    this.updateDashboard();
-                    this.showToast('Perfil actualizado', 'success');
-
-                } catch (error) {
-                    this.showToast('Error al guardar perfil', 'error');
-                } finally {
-                    this.showLoading('profile', false);
-                }
-            }
-
-            showLoading(type, show) {
-                const loading = document.getElementById(`${type}Loading`);
-                const text = document.getElementById(`${type}SubmitText`);
-                if (loading) loading.style.display = show ? 'inline-block' : 'none';
-                if (text) text.style.display = show ? 'none' : 'inline';
-            }
-
-            showToast(message, type = 'info') {
-                document.querySelectorAll('.toast').forEach(t => t.remove());
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.classList.add('show'), 100);
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
             }
         }
 
-        // Global functions
-        function showTab(tabName) {
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById(`${tabName}-section`).classList.add('active');
+        async function loadTherapistData() {
+            const { data } = await supabase
+                .from('therapists')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .single();
+
+            therapistData = data;
+            await loadServices();
+            updateSubscriptionBanner();
         }
 
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function openServiceModal() {
-            therapistPanel.openServiceModal();
-        }
-
-        function selectPlan(planType) {
-            therapistPanel.selectPlan(planType);
-        }
-
-        function toggleMenu() {
-            therapistPanel.showToast('Menú desplegado', 'info');
-        }
-
-        function viewBookings() {
-            therapistPanel.showToast('Viendo reservas...', 'info');
-        }
-
-        function manageSchedule() {
-            therapistPanel.showToast('Gestionando horarios...', 'info');
-        }
-
-        function viewAnalytics() {
-            therapistPanel.showToast('Cargando estadísticas...', 'info');
-        }
-
-        function requestPayout() {
-            therapistPanel.showToast('Solicitud de retiro enviada', 'success');
-        }
-
-        // Initialize
-        let therapistPanel;
-        document.addEventListener('DOMContentLoaded', () => {
-            therapistPanel = new TherapistPanel();
-            
-            // Close modals on outside click
-            window.onclick = (e) => {
-                if (e.target.classList.contains('modal')) {
-                    e.target.style.display = 'none';
-                }
+        function setupEvents() {
+            document.getElementById('loginForm').onsubmit = (e) => {
+                e.preventDefault();
+                login();
             };
 
-            therapistPanel.showToast('Panel de terapeuta cargado', 'success');
-        });
+            document.getElementById('registerForm').onsubmit = (e) => {
+                e.preventDefault();
+                register();
+            };
+
+            document.getElementById('addServiceForm').onsubmit = (e) => {
+                e.preventDefault();
+                addService();
+            };
+
+            document.getElementById('paymentForm').onsubmit = (e) => {
+                e.preventDefault();
+                submitPayment();
+            };
+
+            document.getElementById('paymentProof').onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const preview = document.getElementById('paymentPreview');
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            showLoader(true);
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+
+                const { data: userData } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (userData.user_type !== 'terapeuta') {
+                    throw new Error('Esta cuenta no es de terapeuta');
+                }
+
+                currentUser = userData;
+                await loadTherapistData();
+                updateUI();
+                showToast('¡Bienvenido de vuelta! 🌟', 'success');
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function register() {
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const password = document.getElementById('registerPassword').value;
+
+            if (password.length < 6) {
+                showToast('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+
+            showLoader(true);
+
+            try {
+                const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+                if (authError) throw authError;
+
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .insert([{
+                        id: authData.user.id,
+                        email,
+                        name,
+                        phone,
+                        user_type: 'terapeuta',
+                        status: 'active'
+                    }])
+                    .select()
+                    .single();
+
+                if (userError) throw userError;
+
+                const trialEnd = new Date();
+                trialEnd.setDate(trialEnd.getDate() + 4);
+
+                await supabase
+                    .from('therapists')
+                    .insert([{
+                        user_id: authData.user.id,
+                        specialty: 'General',
+                        verified: false,
+                        subscription_plan: 'trial',
+                        subscription_status: 'active',
+                        trial_end_date: trialEnd.toISOString()
+                    }]);
+
+                currentUser = userData;
+                await loadTherapistData();
+                updateUI();
+                showToast('¡Cuenta creada! Tienes 4 días de prueba gratis 🎉', 'success');
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function addService() {
+            const service = {
+                therapist_id: therapistData.id,
+                name: document.getElementById('serviceName').value.trim(),
+                category: document.getElementById('serviceCategory').value,
+                description: document.getElementById('serviceDescription').value.trim(),
+                price: document.getElementById('servicePrice').value,
+                location: document.getElementById('serviceLocation').value.trim(),
+                status: 'pending'
+            };
+
+            showLoader(true);
+
+            try {
+                const { data, error } = await supabase
+                    .from('services')
+                    .insert([service])
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                const imageUrl = document.getElementById('serviceImage').value.trim();
+                if (imageUrl) {
+                    await supabase
+                        .from('service_images')
+                        .insert([{
+                            service_id: data.id,
+                            image_url: imageUrl,
+                            image_order: 0
+                        }]);
+                }
+
+                closeModal('addServiceModal');
+                document.getElementById('addServiceForm').reset();
+                await loadServices();
+                showToast('Servicio creado. Esperando aprobación del admin 🕐', 'success');
+
+                const whatsappMessage = encodeURIComponent(
+                    `🌟 NUEVO SERVICIO PARA APROBAR\n\nTerapeuta: ${currentUser.name}\nServicio: ${service.name}\nPrecio: S/ ${service.price}\n\n✅ Revisar ahora`
+                );
+                setTimeout(() => {
+                    window.open(`https://wa.me/51910680644?text=${whatsappMessage}`, '_blank');
+                }, 1000);
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function loadServices() {
+            try {
+                const { data } = await supabase
+                    .from('services')
+                    .select('*')
+                    .eq('therapist_id', therapistData.id)
+                    .is('deleted_at', null)
+                    .order('created_at', { ascending: false });
+
+                const approved = data.filter(s => s.status === 'approved').length;
+                document.getElementById('statServices').textContent = approved;
+
+                const list = document.getElementById('servicesList');
+                if (data.length === 0) {
+                    list.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 3rem;">No tienes servicios aún. ¡Crea tu primer servicio!</p>';
+                    return;
+                }
+
+                list.innerHTML = data.map(service => `
+                    <div class="service-item">
+                        <div class="service-info">
+                            <h3>${service.name}</h3>
+                            <p style="color: var(--muted); font-size: 0.95rem; margin-top: 0.3rem;">
+                                <i class="fas fa-map-marker-alt"></i> ${service.location} • <i class="fas fa-money-bill-wave"></i> S/ ${service.price}
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap;">
+                            <span class="service-status status-${service.status}">
+                                ${service.status === 'approved' ? '✓ Aprobado' : service.status === 'pending' ? '⏳ Pendiente' : '✗ Rechazado'}
+                            </span>
+                            ${service.status === 'approved' ? `
+                                <button class="btn btn-danger" onclick="deleteService('${service.id}')" style="padding: 0.5rem 1rem;">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function deleteService(id) {
+            if (!confirm('¿Seguro que quieres eliminar este servicio?')) return;
+
+            showLoader(true);
+            try {
+                await supabase
+                    .from('services')
+                    .update({ deleted_at: new Date().toISOString() })
+                    .eq('id', id);
+
+                await loadServices();
+                showToast('Servicio eliminado correctamente', 'success');
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        function updateSubscriptionBanner() {
+            const banner = document.getElementById('subscriptionBanner');
+            const now = new Date();
+            const trialEnd = new Date(therapistData.trial_end_date);
+            const diff = trialEnd - now;
+            const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+            if (therapistData.subscription_plan === 'pro' && therapistData.subscription_status === 'active') {
+                banner.innerHTML = `
+                    <div class="subscription-banner">
+                        <h3><i class="fas fa-crown"></i> Plan PRO Activo</h3>
+                        <p style="font-size: 1.2rem; color: var(--text); margin: 1rem 0;">
+                            ¡Estás destacado! Apareces primero en las búsquedas 🎯
+                        </p>
+                        <div class="timer" id="timer">48:00:00</div>
+                        <p style="color: var(--muted); font-size: 1rem; margin-bottom: 1rem;">Tiempo restante</p>
+                        <button class="btn btn-gold" onclick="openModal('paymentModal')" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                            <i class="fas fa-sync-alt"></i> Renovar Plan PRO
+                        </button>
+                    </div>
+                `;
+                startTimer();
+            } else if (daysLeft > 0) {
+                banner.innerHTML = `
+                    <div class="subscription-banner" style="border-color: var(--warning);">
+                        <h3><i class="fas fa-gift"></i> Prueba Gratuita Activa</h3>
+                        <p style="font-size: 1.4rem; margin: 1rem 0;">
+                            Te quedan <strong style="color: var(--warning); font-size: 1.6rem;">${daysLeft} días</strong> de prueba
+                        </p>
+                        <button class="btn btn-gold" onclick="openModal('paymentModal')" style="margin-top: 1rem; font-size: 1.2rem; padding: 1.2rem 2.5rem;">
+                            <i class="fas fa-crown"></i> Activar Plan PRO (S/ 30)
+                        </button>
+                    </div>
+                `;
+            } else {
+                banner.innerHTML = `
+                    <div class="subscription-banner" style="border-color: var(--error); background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(0, 0, 0, 0.3));">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Prueba Finalizada</h3>
+                        <p style="font-size: 1.2rem; margin: 1rem 0;">
+                            Activa el Plan PRO para seguir visible para los clientes
+                        </p>
+                        <button class="btn btn-gold" onclick="openModal('paymentModal')" style="margin-top: 1rem; font-size: 1.2rem; padding: 1.2rem 2.5rem;">
+                            <i class="fas fa-crown"></i> Activar Plan PRO (S/ 30)
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                const timerEl = document.getElementById('timer');
+                if (!timerEl) {
+                    clearInterval(timerInterval);
+                    return;
+                }
+
+                const parts = timerEl.textContent.split(':');
+                let hours = parseInt(parts[0]);
+                let minutes = parseInt(parts[1]);
+                let seconds = parseInt(parts[2]);
+
+                seconds--;
+                if (seconds < 0) {
+                    seconds = 59;
+                    minutes--;
+                }
+                if (minutes < 0) {
+                    minutes = 59;
+                    hours--;
+                }
+                if (hours < 0) {
+                    clearInterval(timerInterval);
+                    showToast('¡Tu plan ha expirado! Renueva ahora 👑', 'warning');
+                    setTimeout(() => updateSubscriptionBanner(), 1000);
+                    return;
+                }
+
+                timerEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        async function submitPayment() {
+            const fileInput = document.getElementById('paymentProof');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showToast('Por favor sube la captura del pago', 'error');
+                return;
+            }
+
+            showLoader(true);
+
+            try {
+                const fileName = `payment_${currentUser.id}_${Date.now()}.${file.name.split('.').pop()}`;
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('payments')
+                    .upload(fileName, file);
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('payments')
+                    .getPublicUrl(fileName);
+
+                await supabase
+                    .from('payments')
+                    .insert([{
+                        therapist_id: therapistData.id,
+                        amount: 30.00,
+                        payment_method: 'yape',
+                        payment_proof_url: publicUrl,
+                        status: 'pending'
+                    }]);
+
+                closeModal('paymentModal');
+                document.getElementById('paymentForm').reset();
+                document.getElementById('paymentPreview').style.display = 'none';
+                showToast('¡Pago enviado! Lo verificaremos en 24h 🕐', 'success');
+
+                const whatsappMessage = encodeURIComponent(
+                    `💰 NUEVO PAGO RECIBIDO\n\nTerapeuta: ${currentUser.name}\nMonto: S/ 30.00\nMétodo: Yape\n\n✅ Ver comprobante y aprobar`
+                );
+                setTimeout(() => {
+                    window.open(`https://wa.me/51910680644?text=${whatsappMessage}`, '_blank');
+                }, 1000);
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        function updateUI() {
+            if (currentUser) {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('dashboardSection').classList.add('active');
+                document.getElementById('guestButtons').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'flex';
+                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0);
+                document.getElementById('userName').textContent = currentUser.name;
+                
+                if (therapistData) {
+                    document.getElementById('subscriptionStatus').textContent = 
+                        therapistData.subscription_plan === 'pro' ? '👑 PRO' : '🎁 Prueba Gratis';
+                }
+            }
+        }
+
+        async function logout() {
+            if (confirm('¿Cerrar sesión?')) {
+                await supabase.auth.signOut();
+                currentUser = null;
+                therapistData = null;
+                clearInterval(timerInterval);
+                location.reload();
+            }
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function showLoader(show) {
+            document.getElementById('loaderOverlay').classList.toggle('show', show);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
