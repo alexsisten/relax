@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KusiRelax - Portal Clientes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#81e6d9">
+    <title>KusiRelax - Encuentra tu Terapeuta en Cusco</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -21,14 +22,15 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, var(--dark), #243447);
             color: var(--text);
             min-height: 100vh;
-            transition: all 0.3s;
+            overflow-x: hidden;
         }
 
         .header {
@@ -49,10 +51,12 @@
             align-items: center;
             max-width: 1400px;
             margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .logo {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: var(--primary);
             display: flex;
@@ -62,18 +66,15 @@
             transition: all 0.3s;
         }
 
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
         .nav-buttons {
             display: flex;
-            gap: 0.8rem;
+            gap: 0.5rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 0.7rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border: none;
             border-radius: 25px;
             cursor: pointer;
@@ -83,7 +84,8 @@
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
         }
 
         .btn-primary {
@@ -102,14 +104,13 @@
             color: #000;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(129, 230, 217, 0.4);
+        .btn:active {
+            transform: scale(0.95);
         }
 
         .main {
             margin-top: 80px;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
             max-width: 1400px;
             margin-left: auto;
             margin-right: auto;
@@ -117,11 +118,11 @@
 
         .hero {
             text-align: center;
-            padding: 4rem 0 3rem;
+            padding: 2rem 0 1.5rem;
         }
 
         .hero h1 {
-            font-size: 3rem;
+            font-size: 2rem;
             margin-bottom: 1rem;
             background: linear-gradient(45deg, var(--primary), #bee3f8);
             -webkit-background-clip: text;
@@ -131,42 +132,28 @@
         }
 
         .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
             color: var(--muted);
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 2rem;
         }
 
         .filters {
             background: rgba(45, 55, 72, 0.8);
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 20px;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(129, 230, 217, 0.2);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .filters h3 {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             color: var(--primary);
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        .filters-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
         }
 
         .search-container {
@@ -176,7 +163,7 @@
 
         .search-input {
             width: 100%;
-            padding: 1.2rem 1rem 1.2rem 3.5rem;
+            padding: 1rem 1rem 1rem 3rem;
             border: 2px solid rgba(129, 230, 217, 0.3);
             border-radius: 25px;
             background: rgba(26, 35, 50, 0.8);
@@ -193,11 +180,17 @@
 
         .search-icon {
             position: absolute;
-            left: 1.2rem;
+            left: 1rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--primary);
-            font-size: 1.3rem;
+            font-size: 1.2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
         }
 
         .filter-select {
@@ -208,7 +201,6 @@
             color: var(--text);
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
         .filter-select:focus {
@@ -219,7 +211,7 @@
         .services-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .service-card {
@@ -232,30 +224,63 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .service-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(129, 230, 217, 0.3);
-            border-color: var(--primary);
+        .service-images {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+            background: #000;
         }
 
         .service-image {
-            height: 300px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            transition: opacity 0.5s;
+        }
+
+        .service-image.active {
+            display: block;
+        }
+
+        .image-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.4rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+        }
+
+        .image-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .image-dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 4px;
         }
 
         .pro-badge {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 10px;
+            right: 10px;
             background: linear-gradient(90deg, #fbbf24, #f59e0b);
-            padding: 0.6rem 1.2rem;
-            border-radius: 25px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
             font-weight: bold;
             color: #000;
-            font-size: 0.95rem;
-            box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
+            font-size: 0.75rem;
+            box-shadow: 0 3px 10px rgba(251, 191, 36, 0.4);
             animation: pulse 2s infinite;
         }
 
@@ -265,7 +290,7 @@
         }
 
         .service-content {
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
         .service-header {
@@ -273,36 +298,38 @@
             justify-content: space-between;
             align-items: start;
             margin-bottom: 1rem;
+            gap: 1rem;
         }
 
         .service-name {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: var(--text);
             margin-bottom: 0.5rem;
+            line-height: 1.3;
         }
 
         .therapist-name {
             color: var(--primary);
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 0.3rem;
         }
 
         .therapist-avatar {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, var(--primary), #bee3f8);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: #000;
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(129, 230, 217, 0.3);
+            flex-shrink: 0;
         }
 
         .service-location {
@@ -311,31 +338,34 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .service-description {
             color: var(--muted);
-            line-height: 1.8;
+            line-height: 1.6;
             margin-bottom: 1.5rem;
+            font-size: 0.95rem;
         }
 
         .service-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 1.5rem;
+            padding-top: 1rem;
             border-top: 2px solid rgba(129, 230, 217, 0.2);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .service-price {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: bold;
             color: var(--primary);
         }
 
         .whatsapp-btn {
-            padding: 1rem 2rem;
+            padding: 0.8rem 1.5rem;
             background: #25D366;
             color: white;
             border: none;
@@ -347,26 +377,27 @@
             gap: 0.5rem;
             font-weight: 600;
             transition: all 0.3s;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
-        .whatsapp-btn:hover {
-            background: #20BA5A;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5);
+        .whatsapp-btn:active {
+            transform: scale(0.95);
         }
 
         .toast {
             position: fixed;
-            top: 100px;
+            top: 90px;
             right: 20px;
-            padding: 1rem 1.5rem;
+            left: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 1rem;
             border-radius: 15px;
             color: white;
             font-weight: 600;
             z-index: 3000;
             opacity: 0;
-            transform: translateX(100%);
+            transform: translateY(-20px);
             transition: all 0.3s;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             display: flex;
@@ -376,16 +407,11 @@
 
         .toast.show {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateY(0);
         }
 
-        .toast.success {
-            background: var(--success);
-        }
-
-        .toast.error {
-            background: var(--error);
-        }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--error); }
 
         .loader-overlay {
             display: none;
@@ -405,9 +431,9 @@
         }
 
         .loader {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(129, 230, 217, 0.3);
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(129, 230, 217, 0.3);
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -419,23 +445,18 @@
 
         .empty-state {
             text-align: center;
-            padding: 5rem 2rem;
+            padding: 3rem 1rem;
             color: var(--muted);
         }
 
         .empty-state i {
-            font-size: 5rem;
-            margin-bottom: 1.5rem;
+            font-size: 4rem;
+            margin-bottom: 1rem;
             opacity: 0.3;
         }
 
-        .empty-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-        }
-
         @media (min-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
             .services-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -445,6 +466,7 @@
         }
 
         @media (min-width: 1024px) {
+            .hero h1 { font-size: 3rem; }
             .services-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -477,12 +499,6 @@
         <section class="hero">
             <h1>🌸 Tu Bienestar es Nuestra Misión</h1>
             <p>Conecta con los mejores terapeutas de Cusco</p>
-            
-            <div class="cta-buttons">
-                <button class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">
-                    <i class="fas fa-search"></i> Explorar Servicios
-                </button>
-            </div>
         </section>
 
         <div class="filters">
@@ -496,12 +512,12 @@
             <div class="filters-grid">
                 <select class="filter-select" id="categoryFilter">
                     <option value="">Todas las categorías</option>
-                    <option value="masaje">Masajes</option>
-                    <option value="spa">Spa & Relajación</option>
-                    <option value="yoga">Yoga</option>
-                    <option value="meditacion">Meditación</option>
-                    <option value="reiki">Reiki</option>
-                    <option value="terapia">Terapias</option>
+                    <option value="masaje">💆 Masajes</option>
+                    <option value="spa">🧖 Spa & Relajación</option>
+                    <option value="yoga">🧘 Yoga</option>
+                    <option value="meditacion">🕉️ Meditación</option>
+                    <option value="reiki">✨ Reiki</option>
+                    <option value="terapia">🌿 Terapias</option>
                 </select>
                 
                 <select class="filter-select" id="locationFilter">
@@ -527,7 +543,92 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4cG94bmViZWttd3JhcmpucWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2NzgyNTUsImV4cCI6MjA3NTI1NDI1NX0.W51sb2JrEQ-i-fkKWdHVnC0HuDP4X_968SbE0vQagUE';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let services = [];
+        let allServices = [];
+        const imageRotateIntervals = {};
+
+        const demoServices = [
+            {
+                id: 1,
+                name: 'Masaje Relajante Completo',
+                category: 'masaje',
+                description: 'Masaje de cuerpo completo con técnicas de relajación profunda. Incluye aromaterapia y música ambiental. Duración: 90 minutos.',
+                price: '120.00',
+                location: 'Cusco Centro, Av. El Sol 456',
+                therapistName: 'María González',
+                therapistPhone: '910680644',
+                isPro: true,
+                images: [
+                    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&h=500&fit=crop'
+                ]
+            },
+            {
+                id: 2,
+                name: 'Yoga Restaurativo',
+                category: 'yoga',
+                description: 'Sesión de yoga suave enfocada en la restauración y balance del cuerpo. Ideal para principiantes.',
+                price: '50.00',
+                location: 'San Blas, Calle Tandapata 123',
+                therapistName: 'Carlos Quispe',
+                therapistPhone: '910680644',
+                isPro: false,
+                images: [
+                    'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=500&fit=crop'
+                ]
+            },
+            {
+                id: 3,
+                name: 'Spa Facial con Piedras Calientes',
+                category: 'spa',
+                description: 'Tratamiento facial completo con piedras volcánicas calientes, limpieza profunda, exfoliación y mascarilla nutritiva.',
+                price: '95.00',
+                location: 'Wanchaq, Av. De la Cultura 789',
+                therapistName: 'Ana Flores',
+                therapistPhone: '910680644',
+                isPro: true,
+                images: [
+                    'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1552693673-1bf958298935?w=800&h=500&fit=crop'
+                ]
+            },
+            {
+                id: 4,
+                name: 'Reiki Nivel I',
+                category: 'reiki',
+                description: 'Sesión de sanación energética mediante Reiki. Equilibra los chakras y promueve la paz interior. 60 minutos.',
+                price: '70.00',
+                location: 'San Sebastián, Urb. Los Incas',
+                therapistName: 'Pedro Mamani',
+                therapistPhone: '910680644',
+                isPro: false,
+                images: [
+                    'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=500&fit=crop'
+                ]
+            },
+            {
+                id: 5,
+                name: 'Masaje Deportivo Pre-Competencia',
+                category: 'masaje',
+                description: 'Masaje especializado para deportistas. Prepara los músculos para el rendimiento óptimo. 45 minutos de masaje intenso.',
+                price: '85.00',
+                location: 'Cusco Centro, Av. Ejercito 234',
+                therapistName: 'Laura Vargas',
+                therapistPhone: '910680644',
+                isPro: true,
+                images: [
+                    'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=800&h=500&fit=crop',
+                    'https://images.unsplash.com/photo-1552693673-1bf958298935?w=800&h=500&fit=crop'
+                ]
+            }
+        ];
 
         async function init() {
             showLoader(true);
@@ -535,9 +636,9 @@
             showLoader(false);
             showToast('¡Bienvenido a KusiRelax! 🌸', 'success');
             
-            document.getElementById('searchInput').oninput = (e) => {
+            document.getElementById('searchInput').addEventListener('input', (e) => {
                 searchServices(e.target.value);
-            };
+            });
         }
 
         async function loadServices() {
@@ -546,7 +647,7 @@
                     .from('services')
                     .select(`
                         *,
-                        service_images(*),
+                        service_images(image_url, image_order),
                         therapist:therapists(
                             subscription_plan,
                             user:users(name, phone)
@@ -558,37 +659,42 @@
 
                 if (error) throw error;
 
-                services = data.map(s => ({
-                    ...s,
-                    therapistName: s.therapist.user.name,
-                    therapistPhone: s.therapist.user.phone,
-                    image: s.service_images[0]?.image_url || 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=500&fit=crop',
-                    isPro: s.therapist.subscription_plan === 'pro'
-                }));
-
-                services.sort((a, b) => b.isPro - a.isPro);
-                renderServices(services);
+                if (data && data.length > 0) {
+                    allServices = data.map(s => ({
+                        ...s,
+                        therapistName: s.therapist.user.name,
+                        therapistPhone: s.therapist.user.phone,
+                        images: s.service_images.sort((a, b) => a.image_order - b.image_order).map(img => img.image_url),
+                        isPro: s.therapist.subscription_plan === 'pro'
+                    }));
+                    allServices.sort((a, b) => b.isPro - a.isPro);
+                } else {
+                    allServices = [...demoServices];
+                }
+                
+                renderServices(allServices);
             } catch (error) {
                 console.error('Error:', error);
-                showToast('Error al cargar servicios', 'error');
+                allServices = [...demoServices];
+                renderServices(allServices);
             }
         }
 
         function searchServices(query) {
             if (query.length > 2) {
-                const filtered = services.filter(s =>
+                const filtered = allServices.filter(s =>
                     s.name.toLowerCase().includes(query.toLowerCase()) ||
                     s.description.toLowerCase().includes(query.toLowerCase()) ||
                     s.therapistName.toLowerCase().includes(query.toLowerCase())
                 );
                 renderServices(filtered);
             } else if (query.length === 0) {
-                renderServices(services);
+                renderServices(allServices);
             }
         }
 
         function applyFilters() {
-            let filtered = [...services];
+            let filtered = [...allServices];
             
             const category = document.getElementById('categoryFilter').value;
             const location = document.getElementById('locationFilter').value;
@@ -610,12 +716,14 @@
         function renderServices(data) {
             const grid = document.getElementById('servicesGrid');
             
+            Object.values(imageRotateIntervals).forEach(interval => clearInterval(interval));
+            
             if (data.length === 0) {
                 grid.innerHTML = `
                     <div class="empty-state" style="grid-column: 1 / -1;">
                         <i class="fas fa-search"></i>
                         <h3>No se encontraron servicios</h3>
-                        <p>Intenta con otros filtros de búsqueda</p>
+                        <p>Intenta con otros filtros</p>
                     </div>
                 `;
                 return;
@@ -629,13 +737,23 @@
 
                 return `
                     <div class="service-card">
-                        <div class="service-image" style="background-image: url('${service.image}')">
-                            ${service.isPro ? '<div class="pro-badge"><i class="fas fa-crown"></i> TERAPEUTA PRO</div>' : ''}
+                        <div class="service-images" id="images-${service.id}">
+                            ${service.isPro ? '<div class="pro-badge"><i class="fas fa-crown"></i> PRO</div>' : ''}
+                            ${service.images.map((img, i) => `
+                                <img src="${img}" class="service-image ${i === 0 ? 'active' : ''}" alt="${service.name}">
+                            `).join('')}
+                            ${service.images.length > 1 ? `
+                                <div class="image-nav">
+                                    ${service.images.map((_, i) => `
+                                        <div class="image-dot ${i === 0 ? 'active' : ''}" onclick="changeImage(${service.id}, ${i})"></div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
                         </div>
                         
                         <div class="service-content">
                             <div class="service-header">
-                                <div>
+                                <div style="flex: 1;">
                                     <div class="service-name">${service.name}</div>
                                     <div class="therapist-name"><i class="fas fa-user-md"></i> ${service.therapistName}</div>
                                 </div>
@@ -659,6 +777,32 @@
                     </div>
                 `;
             }).join('');
+
+            data.forEach(service => {
+                if (service.images.length > 1) {
+                    let currentIndex = 0;
+                    imageRotateIntervals[service.id] = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % service.images.length;
+                        changeImage(service.id, currentIndex);
+                    }, 4000);
+                }
+            });
+        }
+
+        function changeImage(serviceId, index) {
+            const container = document.getElementById(`images-${serviceId}`);
+            if (!container) return;
+            
+            const images = container.querySelectorAll('.service-image');
+            const dots = container.querySelectorAll('.image-dot');
+            
+            images.forEach((img, i) => {
+                img.classList.toggle('active', i === index);
+            });
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
         }
 
         function showLoader(show) {
