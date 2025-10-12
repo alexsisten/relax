@@ -11,20 +11,17 @@
         :root {
             --primary: #81e6d9;
             --dark: #0a0f1c;
-            --card: #1a2332;
             --text: #e2e8f0;
             --muted: #a0aec0;
             --success: #22c55e;
             --error: #ef4444;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, var(--dark), #243447);
@@ -32,7 +29,6 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-
         .header {
             background: rgba(26, 35, 50, 0.95);
             padding: 1rem;
@@ -44,7 +40,6 @@
             border-bottom: 2px solid var(--primary);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
-
         .nav {
             display: flex;
             justify-content: space-between;
@@ -54,7 +49,6 @@
             flex-wrap: wrap;
             gap: 0.5rem;
         }
-
         .logo {
             font-size: 1.4rem;
             font-weight: bold;
@@ -65,14 +59,12 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .nav-buttons {
             display: flex;
             gap: 0.5rem;
             align-items: center;
             flex-wrap: wrap;
         }
-
         .btn {
             padding: 0.6rem 1.2rem;
             border: none;
@@ -87,27 +79,22 @@
             font-size: 0.9rem;
             white-space: nowrap;
         }
-
         .btn-primary {
             background: var(--primary);
             color: #000;
         }
-
         .btn-secondary {
             background: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
         }
-
         .btn-gold {
             background: linear-gradient(90deg, #fbbf24, #f59e0b);
             color: #000;
         }
-
         .btn:active {
             transform: scale(0.95);
         }
-
         .main {
             margin-top: 80px;
             padding: 1.5rem 1rem;
@@ -115,12 +102,10 @@
             margin-left: auto;
             margin-right: auto;
         }
-
         .hero {
             text-align: center;
             padding: 2rem 0 1.5rem;
         }
-
         .hero h1 {
             font-size: 2rem;
             margin-bottom: 1rem;
@@ -130,13 +115,11 @@
             font-weight: 800;
             line-height: 1.2;
         }
-
         .hero p {
             font-size: 1.1rem;
             margin-bottom: 1.5rem;
             color: var(--muted);
         }
-
         .filters {
             background: rgba(45, 55, 72, 0.8);
             padding: 1.5rem;
@@ -146,7 +129,6 @@
             border: 2px solid rgba(129, 230, 217, 0.2);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-
         .filters h3 {
             margin-bottom: 1rem;
             color: var(--primary);
@@ -155,12 +137,10 @@
             align-items: center;
             gap: 0.5rem;
         }
-
         .search-container {
             position: relative;
             margin-bottom: 1rem;
         }
-
         .search-input {
             width: 100%;
             padding: 1rem 1rem 1rem 3rem;
@@ -171,13 +151,11 @@
             font-size: 1rem;
             transition: all 0.3s;
         }
-
         .search-input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 20px rgba(129, 230, 217, 0.3);
         }
-
         .search-icon {
             position: absolute;
             left: 1rem;
@@ -186,13 +164,11 @@
             color: var(--primary);
             font-size: 1.2rem;
         }
-
         .filters-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 0.8rem;
         }
-
         .filter-select {
             padding: 1rem;
             border: 2px solid rgba(129, 230, 217, 0.3);
@@ -202,18 +178,15 @@
             font-size: 1rem;
             cursor: pointer;
         }
-
         .filter-select:focus {
             outline: none;
             border-color: var(--primary);
         }
-
         .services-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 1.5rem;
         }
-
         .service-card {
             background: rgba(45, 55, 72, 0.8);
             border-radius: 20px;
@@ -223,14 +196,12 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-
         .service-images {
             position: relative;
             height: 250px;
             overflow: hidden;
             background: #000;
         }
-
         .service-image {
             width: 100%;
             height: 100%;
@@ -238,11 +209,9 @@
             display: none;
             transition: opacity 0.5s;
         }
-
         .service-image.active {
             display: block;
         }
-
         .image-nav {
             position: absolute;
             bottom: 10px;
@@ -254,7 +223,6 @@
             padding: 0.3rem 0.6rem;
             border-radius: 15px;
         }
-
         .image-dot {
             width: 8px;
             height: 8px;
@@ -263,13 +231,11 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .image-dot.active {
             background: white;
             width: 24px;
             border-radius: 4px;
         }
-
         .pro-badge {
             position: absolute;
             top: 10px;
@@ -283,16 +249,13 @@
             box-shadow: 0 3px 10px rgba(251, 191, 36, 0.4);
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
-
         .service-content {
             padding: 1.5rem;
         }
-
         .service-header {
             display: flex;
             justify-content: space-between;
@@ -300,7 +263,6 @@
             margin-bottom: 1rem;
             gap: 1rem;
         }
-
         .service-name {
             font-size: 1.3rem;
             font-weight: bold;
@@ -308,7 +270,6 @@
             margin-bottom: 0.5rem;
             line-height: 1.3;
         }
-
         .therapist-name {
             color: var(--primary);
             font-weight: 600;
@@ -317,7 +278,6 @@
             align-items: center;
             gap: 0.3rem;
         }
-
         .therapist-avatar {
             width: 50px;
             height: 50px;
@@ -331,7 +291,6 @@
             font-weight: bold;
             flex-shrink: 0;
         }
-
         .service-location {
             color: var(--muted);
             margin-bottom: 1rem;
@@ -340,14 +299,12 @@
             gap: 0.5rem;
             font-size: 0.9rem;
         }
-
         .service-description {
             color: var(--muted);
             line-height: 1.6;
             margin-bottom: 1.5rem;
             font-size: 0.95rem;
         }
-
         .service-footer {
             display: flex;
             justify-content: space-between;
@@ -357,13 +314,11 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-
         .service-price {
             font-size: 1.8rem;
             font-weight: bold;
             color: var(--primary);
         }
-
         .whatsapp-btn {
             padding: 0.8rem 1.5rem;
             background: #25D366;
@@ -379,11 +334,9 @@
             transition: all 0.3s;
             font-size: 0.95rem;
         }
-
         .whatsapp-btn:active {
             transform: scale(0.95);
         }
-
         .toast {
             position: fixed;
             top: 90px;
@@ -404,15 +357,12 @@
             align-items: center;
             gap: 0.5rem;
         }
-
         .toast.show {
             opacity: 1;
             transform: translateY(0);
         }
-
         .toast.success { background: var(--success); }
         .toast.error { background: var(--error); }
-
         .loader-overlay {
             display: none;
             position: fixed;
@@ -425,11 +375,9 @@
             justify-content: center;
             align-items: center;
         }
-
         .loader-overlay.show {
             display: flex;
         }
-
         .loader {
             width: 50px;
             height: 50px;
@@ -438,23 +386,19 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
             color: var(--muted);
         }
-
         .empty-state i {
             font-size: 4rem;
             margin-bottom: 1rem;
             opacity: 0.3;
         }
-
         @media (min-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
             .services-grid {
@@ -464,7 +408,6 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
-
         @media (min-width: 1024px) {
             .hero h1 { font-size: 3rem; }
             .services-grid {
@@ -592,39 +535,6 @@
                     'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=800&h=500&fit=crop',
                     'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&h=500&fit=crop',
                     'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1552693673-1bf958298935?w=800&h=500&fit=crop'
-                ]
-            },
-            {
-                id: 4,
-                name: 'Reiki Nivel I',
-                category: 'reiki',
-                description: 'Sesión de sanación energética mediante Reiki. Equilibra los chakras y promueve la paz interior. 60 minutos.',
-                price: '70.00',
-                location: 'San Sebastián, Urb. Los Incas',
-                therapistName: 'Pedro Mamani',
-                therapistPhone: '910680644',
-                isPro: false,
-                images: [
-                    'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=500&fit=crop'
-                ]
-            },
-            {
-                id: 5,
-                name: 'Masaje Deportivo Pre-Competencia',
-                category: 'masaje',
-                description: 'Masaje especializado para deportistas. Prepara los músculos para el rendimiento óptimo. 45 minutos de masaje intenso.',
-                price: '85.00',
-                location: 'Cusco Centro, Av. Ejercito 234',
-                therapistName: 'Laura Vargas',
-                therapistPhone: '910680644',
-                isPro: true,
-                images: [
-                    'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=500&fit=crop',
-                    'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=800&h=500&fit=crop',
                     'https://images.unsplash.com/photo-1552693673-1bf958298935?w=800&h=500&fit=crop'
                 ]
             }
