@@ -18,21 +18,18 @@
             --error: #ef4444;
             --gold: #fbbf24;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, var(--dark), #243447);
             color: var(--text);
             min-height: 100vh;
         }
-
         .header {
             background: rgba(26, 35, 50, 0.95);
             padding: 1rem;
@@ -43,7 +40,6 @@
             backdrop-filter: blur(10px);
             border-bottom: 2px solid var(--primary);
         }
-
         .nav {
             display: flex;
             justify-content: space-between;
@@ -53,7 +49,6 @@
             flex-wrap: wrap;
             gap: 0.5rem;
         }
-
         .logo {
             font-size: 1.4rem;
             font-weight: bold;
@@ -63,7 +58,6 @@
             gap: 0.5rem;
             text-decoration: none;
         }
-
         .btn {
             padding: 0.6rem 1.2rem;
             border: none;
@@ -77,37 +71,30 @@
             text-decoration: none;
             font-size: 0.9rem;
         }
-
         .btn-primary {
             background: var(--primary);
             color: #000;
         }
-
         .btn-gold {
             background: linear-gradient(90deg, var(--gold), #f59e0b);
             color: #000;
             animation: shimmer 3s infinite;
         }
-
         .btn-danger {
             background: var(--error);
             color: white;
         }
-
         .btn:active {
             transform: scale(0.95);
         }
-
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-
         @keyframes shimmer {
             0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
             50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
         }
-
         .main {
             margin-top: 80px;
             padding: 1.5rem 1rem;
@@ -115,7 +102,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-
         .card {
             background: rgba(45, 55, 72, 0.8);
             border-radius: 20px;
@@ -123,7 +109,28 @@
             border: 2px solid rgba(129, 230, 217, 0.3);
             margin-bottom: 1.5rem;
         }
-
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            background: rgba(26, 35, 50, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .auth-tab.active {
+            background: var(--primary);
+            color: #000;
+        }
         .subscription-banner {
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(129, 230, 217, 0.2));
             border: 3px solid var(--gold);
@@ -132,14 +139,12 @@
             margin-bottom: 1.5rem;
             text-align: center;
         }
-
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
-
         .stat-card {
             background: rgba(45, 55, 72, 0.8);
             padding: 1.5rem;
@@ -147,14 +152,12 @@
             border: 2px solid rgba(129, 230, 217, 0.3);
             text-align: center;
         }
-
         .stat-value {
             font-size: 2rem;
             font-weight: bold;
             color: var(--primary);
             margin-bottom: 0.5rem;
         }
-
         .modal {
             display: none;
             position: fixed;
@@ -167,7 +170,9 @@
             overflow-y: auto;
             padding: 1rem;
         }
-
+        .modal.show {
+            display: block;
+        }
         .modal-content {
             background: linear-gradient(135deg, rgba(26, 35, 50, 0.98), rgba(45, 55, 72, 0.98));
             margin: 1rem auto;
@@ -176,7 +181,6 @@
             max-width: 600px;
             border: 2px solid var(--primary);
         }
-
         .close {
             color: var(--muted);
             float: right;
@@ -185,17 +189,14 @@
             cursor: pointer;
             line-height: 1;
         }
-
         .form-group {
             margin-bottom: 1.5rem;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 0.7rem;
             font-weight: 600;
         }
-
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -208,14 +209,12 @@
             font-size: 1rem;
             font-family: inherit;
         }
-
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
-
         .upload-area {
             border: 3px dashed var(--primary);
             border-radius: 20px;
@@ -224,25 +223,21 @@
             cursor: pointer;
             background: rgba(129, 230, 217, 0.05);
         }
-
         .images-preview {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 0.8rem;
             margin-top: 1rem;
         }
-
         .preview-item {
             position: relative;
         }
-
         .preview-item img {
             width: 100%;
             height: 100px;
             object-fit: cover;
             border-radius: 10px;
         }
-
         .remove-img {
             position: absolute;
             top: 5px;
@@ -256,7 +251,6 @@
             cursor: pointer;
             font-size: 0.8rem;
         }
-
         .yape-info {
             background: linear-gradient(135deg, #722F91, #9c27b0);
             padding: 2rem;
@@ -265,7 +259,6 @@
             margin: 1.5rem 0;
             color: white;
         }
-
         .yape-number {
             font-size: 2rem;
             font-weight: bold;
@@ -276,7 +269,6 @@
             gap: 0.8rem;
             margin: 1rem 0;
         }
-
         .copy-btn {
             background: rgba(255, 255, 255, 0.2);
             border: none;
@@ -285,14 +277,12 @@
             cursor: pointer;
             color: white;
         }
-
         .yape-amount {
             font-size: 3rem;
             font-weight: bold;
             color: var(--gold);
             margin: 1rem 0;
         }
-
         .toast {
             position: fixed;
             top: 90px;
@@ -309,16 +299,13 @@
             transform: translateY(-20px);
             transition: all 0.3s;
         }
-
         .toast.show {
             opacity: 1;
             transform: translateY(0);
         }
-
         .toast.success { background: var(--success); }
         .toast.error { background: var(--error); }
         .toast.warning { background: var(--warning); color: #000; }
-
         .loader-overlay {
             display: none;
             position: fixed;
@@ -331,11 +318,9 @@
             justify-content: center;
             align-items: center;
         }
-
         .loader-overlay.show {
             display: flex;
         }
-
         .loader {
             width: 50px;
             height: 50px;
@@ -344,25 +329,27 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
         .dashboard {
             display: none;
         }
-
         .dashboard.active {
             display: block;
         }
-
         .service-item {
             background: rgba(26, 35, 50, 0.5);
             padding: 1rem;
             border-radius: 12px;
             border: 2px solid rgba(129, 230, 217, 0.2);
             margin-bottom: 1rem;
+        }
+        .auth-form {
+            display: none;
+        }
+        .auth-form.active {
+            display: block;
         }
     </style>
 </head>
@@ -396,18 +383,17 @@
             </div>
 
             <div class="card" style="max-width: 550px; margin: 0 auto;">
-                <!-- TABS -->
-                <div style="display: flex; margin-bottom: 1.5rem; background: rgba(26, 35, 50, 0.6); border-radius: 15px; overflow: hidden;">
-                    <button id="loginTab" class="auth-tab active" onclick="switchTab('login')" style="flex: 1; padding: 1rem; background: var(--primary); border: none; color: #000; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="switchTab('login')">
                         🔑 Iniciar Sesión
                     </button>
-                    <button id="registerTab" class="auth-tab" onclick="switchTab('register')" style="flex: 1; padding: 1rem; background: transparent; border: none; color: var(--muted); font-weight: 600; cursor: pointer; font-size: 1rem;">
+                    <button class="auth-tab" onclick="switchTab('register')">
                         ✨ Crear Cuenta
                     </button>
                 </div>
 
                 <!-- LOGIN FORM -->
-                <div id="loginForm">
+                <div class="auth-form active" id="loginForm">
                     <h2 style="color: var(--primary); margin-bottom: 1.5rem; text-align: center; font-size: 1.5rem;">
                         <i class="fas fa-sign-in-alt"></i> Bienvenido de Vuelta
                     </h2>
@@ -425,7 +411,7 @@
                 </div>
 
                 <!-- REGISTER FORM -->
-                <div id="registerForm" style="display: none;">
+                <div class="auth-form" id="registerForm">
                     <h2 style="color: var(--primary); margin-bottom: 1rem; text-align: center; font-size: 1.5rem;">
                         <i class="fas fa-gift"></i> Crear Cuenta Gratis
                     </h2>
@@ -607,6 +593,22 @@
         let paymentProofFile = null;
         let todayServicesCount = 0;
 
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const forms = document.querySelectorAll('.auth-form');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
         async function login() {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -637,6 +639,75 @@
                 updateUI();
                 showToast('¡Bienvenido! 🌟', 'success');
             } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        async function register() {
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const password = document.getElementById('registerPassword').value;
+
+            if (!name || !email || !phone || !password) {
+                showToast('Completa todos los campos', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+
+            showLoader(true);
+
+            try {
+                const { data: authData, error: authError } = await supabase.auth.signUp({ 
+                    email, 
+                    password 
+                });
+                
+                if (authError) throw authError;
+
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .insert([{
+                        id: authData.user.id,
+                        email,
+                        name,
+                        phone,
+                        user_type: 'terapeuta',
+                        status: 'active'
+                    }])
+                    .select()
+                    .single();
+
+                if (userError) throw userError;
+
+                const trialEnd = new Date();
+                trialEnd.setDate(trialEnd.getDate() + 4);
+
+                const { error: therapistError } = await supabase
+                    .from('therapists')
+                    .insert([{
+                        user_id: authData.user.id,
+                        specialty: 'General',
+                        verified: false,
+                        subscription_plan: 'trial',
+                        subscription_status: 'active',
+                        trial_end_date: trialEnd.toISOString()
+                    }]);
+
+                if (therapistError) throw therapistError;
+
+                currentUser = userData;
+                await loadTherapistData();
+                updateUI();
+                showToast('¡Cuenta creada! Tienes 4 días de prueba gratis 🎉', 'success');
+            } catch (error) {
+                console.error('Error completo:', error);
                 showToast('Error: ' + error.message, 'error');
             } finally {
                 showLoader(false);
@@ -875,7 +946,7 @@
                 showToast('¡Servicio creado! Esperando aprobación 🕐', 'success');
 
                 const message = encodeURIComponent(
-                    `🌟 NUEVO SERVICIO\n\nTerapeuta: ${currentUser.name}\nServicio: ${name}\nPrecio: S/ ${price}\nFotos: ${uploadedImages.length}\n\nRevisar en admin.kusirelax.com`
+                    `🌟 NUEVO SERVICIO\n\nTerapeuta: ${currentUser.name}\nServicio: ${name}\nPrecio: S/ ${price}\n\nRevisar en admin.kusirelax.com`
                 );
                 
                 setTimeout(() => {
@@ -983,11 +1054,11 @@
         }
 
         function openModal(id) {
-            document.getElementById(id).style.display = 'block';
+            document.getElementById(id).classList.add('show');
         }
 
         function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
+            document.getElementById(id).classList.remove('show');
         }
 
         function showLoader(show) {
@@ -1012,12 +1083,6 @@
                 location.reload();
             }
         }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        };
 
         (async function() {
             const { data: { user } } = await supabase.auth.getUser();
