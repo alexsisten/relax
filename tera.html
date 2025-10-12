@@ -396,20 +396,66 @@
             </div>
 
             <div class="card" style="max-width: 550px; margin: 0 auto;">
-                <h2 style="color: var(--primary); margin-bottom: 2rem; text-align: center;">
-                    <i class="fas fa-user-circle"></i> Acceso de Terapeutas
-                </h2>
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email:</label>
-                    <input type="email" id="loginEmail" placeholder="tu@email.com">
+                <!-- TABS -->
+                <div style="display: flex; margin-bottom: 1.5rem; background: rgba(26, 35, 50, 0.6); border-radius: 15px; overflow: hidden;">
+                    <button id="loginTab" class="auth-tab active" onclick="switchTab('login')" style="flex: 1; padding: 1rem; background: var(--primary); border: none; color: #000; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                        🔑 Iniciar Sesión
+                    </button>
+                    <button id="registerTab" class="auth-tab" onclick="switchTab('register')" style="flex: 1; padding: 1rem; background: transparent; border: none; color: var(--muted); font-weight: 600; cursor: pointer; font-size: 1rem;">
+                        ✨ Crear Cuenta
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Contraseña:</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••">
+
+                <!-- LOGIN FORM -->
+                <div id="loginForm">
+                    <h2 style="color: var(--primary); margin-bottom: 1.5rem; text-align: center; font-size: 1.5rem;">
+                        <i class="fas fa-sign-in-alt"></i> Bienvenido de Vuelta
+                    </h2>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email:</label>
+                        <input type="email" id="loginEmail" placeholder="tu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Contraseña:</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem;" onclick="login()">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
                 </div>
-                <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem;" onclick="login()">
-                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                </button>
+
+                <!-- REGISTER FORM -->
+                <div id="registerForm" style="display: none;">
+                    <h2 style="color: var(--primary); margin-bottom: 1rem; text-align: center; font-size: 1.5rem;">
+                        <i class="fas fa-gift"></i> Crear Cuenta Gratis
+                    </h2>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(129, 230, 217, 0.2)); border: 2px solid var(--gold); border-radius: 15px; padding: 1rem; margin-bottom: 1.5rem; text-align: center;">
+                        <h3 style="color: var(--gold); font-size: 1.1rem; margin-bottom: 0.3rem;">🎉 ¡4 DÍAS DE PRUEBA GRATIS!</h3>
+                        <p style="margin: 0; font-size: 0.9rem;">Empieza a recibir clientes desde hoy</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Nombre Completo:</label>
+                        <input type="text" id="registerName" placeholder="Ej: María González">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email:</label>
+                        <input type="email" id="registerEmail" placeholder="tu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fab fa-whatsapp"></i> Teléfono WhatsApp:</label>
+                        <input type="tel" id="registerPhone" placeholder="+51 999 999 999">
+                        <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem;">Los clientes te contactarán por WhatsApp</p>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Contraseña:</label>
+                        <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <button class="btn btn-gold" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem;" onclick="register()">
+                        <i class="fas fa-rocket"></i> Crear Cuenta Gratis
+                    </button>
+                </div>
             </div>
         </section>
 
